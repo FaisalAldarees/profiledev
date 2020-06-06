@@ -6,7 +6,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 
-CREATE_USER_URL = reverse("api:register")
+CREATE_USER_URL = reverse("api:registration")
 
 
 def create_user(**params):
@@ -16,7 +16,6 @@ def create_user(**params):
 class RegistrationTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-
 
     def test_create_valid_user_success(self):
         payload = {
@@ -29,10 +28,11 @@ class RegistrationTests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
         user = get_user_model().objects.get(**res.data)
+
         self.assertTrue(user.check_password(payload["password"]))
         self.assertNotIn("password", res.data)
-
 
     def test_user_exist(self):
         payload = {
@@ -42,10 +42,14 @@ class RegistrationTests(TestCase):
             "password": "123456",
         }
         create_user(**payload)
-        res = self.client.post(CREATE_USER_URL, payload, confirm_password = "123456")
+        res = self.client.post(
+            CREATE_USER_URL, payload, confirm_password="123456"
+        )
 
+        self.assertEqual(
+            "user with this email already exists.", str(res.data["email"][0])
+        )
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_password_to_short(self):
         payload = {
@@ -58,7 +62,104 @@ class RegistrationTests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            "Ensure this field has at least 5 characters.",
+            str(res.data["password"][0]),
+        )
+
         user_exists = (
             get_user_model().objects.filter(email=payload["email"]).exists()
         )
+
         self.assertFalse(user_exists)
+
+    def test_password_does_not_match(self):
+        payload = {
+            "email": "Bob@gmail.com",
+            "first_name": "Bob",
+            "last_name": "Alice",
+            "password": "123456",
+            "confirm_password": "1234567",
+        }
+        res = self.client.post(CREATE_USER_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            "Passwords does not match up", str(res.data["non_field_errors"][0])
+        )
+
+    def test_user_email_not_provided(self):
+        payload = {
+            "email": "",
+            "first_name": "Bob",
+            "last_name": "Alice",
+            "password": "1234567",
+            "confirm_password": "1234567",
+        }
+        res = self.client.post(CREATE_USER_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            "This field may not be blank.", str(res.data["email"][0])
+        )
+
+    def test_user_first_name_not_provided(self):
+        payload = {
+            "email": "Bob@gmail.com",
+            "first_name": "",
+            "last_name": "Alice",
+            "password": "123456",
+            "confirm_password": "1234567",
+        }
+        res = self.client.post(CREATE_USER_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            "This field may not be blank.", str(res.data["first_name"][0])
+        )
+
+    def test_user_last_name_not_provided(self):
+        payload = {
+            "email": "Bob@gmail.com",
+            "first_name": "Bob",
+            "last_name": "",
+            "password": "1234567",
+            "confirm_password": "1234567",
+        }
+        res = self.client.post(CREATE_USER_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            "This field may not be blank.", str(res.data["last_name"][0])
+        )
+
+    def test_user_password_not_provided(self):
+        payload = {
+            "email": "bob@gmail.com",
+            "first_name": "Bob",
+            "last_name": "Alice",
+            "password": "",
+            "confirm_password": "1234567",
+        }
+        res = self.client.post(CREATE_USER_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            "This field may not be blank.", str(res.data["password"][0])
+        )
+
+    def test_user_confirm_password_not_provided(self):
+        payload = {
+            "email": "bob@gmail.com",
+            "first_name": "Bob",
+            "last_name": "Alice",
+            "password": "123456",
+            "confirm_password": "",
+        }
+        res = self.client.post(CREATE_USER_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            "This field may not be blank.",
+            str(res.data["confirm_password"][0]),
+        )

@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 
 
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(
-        label="Confirm Password", allow_blank=False, write_only=True
+        allow_blank=False, write_only=True
     )
 
     class Meta:
@@ -24,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
         password = data.get("password")
         confirm_password = data.pop("confirm_password")
         if password != confirm_password:
-            raise ValidationError("Passwords does not match up")
+            raise ValidationError(_("Passwords does not match up"))
         return data
 
     def create(self, validated_data):

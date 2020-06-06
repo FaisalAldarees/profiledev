@@ -18,12 +18,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password):
-        user = self.create_user(email, password)
-        user.is_staff = True
-        user.is_superuser = True
-        user.save(using=self._db)
-
-        return user
+        raise NotImplementedError("Create super user is not supported")
 
 
 class User(AbstractBaseUser, PermissionsMixin):
