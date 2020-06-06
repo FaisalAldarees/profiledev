@@ -50,7 +50,7 @@ coverage.xml
 
 # local settings
 local_settings.py
-￼.vscode￼
+￼.vscode￼/
 
 # Logs:
 .log
