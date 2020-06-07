@@ -79,8 +79,12 @@ WSGI_APPLICATION = 'profile_dev.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
+        'NAME': os.environ.get('DB_NAME', 'profile_dev'),
+        'USER': os.environ.get('DB_USER', 'profile_dev'),
+        'PASSWORD': os.environ.get('DB_PASS', 'profile_dev'),
     }
 }
 
@@ -122,5 +126,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 
 AUTH_USER_MODEL = 'users.User'

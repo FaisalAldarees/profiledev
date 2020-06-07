@@ -4,6 +4,8 @@ from rest_framework.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 
+from users.models import UserInfo
+
 
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(
@@ -29,4 +31,6 @@ class UserSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        return get_user_model().objects.create_user(**validated_data)
+        user = get_user_model().objects.create_user(**validated_data)
+        UserInfo.objects.create(user=user)
+        return user
