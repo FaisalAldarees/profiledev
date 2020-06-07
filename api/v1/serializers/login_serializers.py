@@ -7,7 +7,7 @@ from rest_framework import serializers
 class AuthTokenSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField(
-        style={'imput_type': 'password'},
+        style={'input_type': 'password'},
         trim_whitespace=False
     )
 
