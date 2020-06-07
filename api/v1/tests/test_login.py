@@ -17,7 +17,7 @@ class LoginTests(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def tset_create_token_for_user(self):
+    def test_create_token_for_user(self):
         payload = {
             'email': 'test@gmail.com',
             'password': '123456'
@@ -47,7 +47,6 @@ class LoginTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_token_missing_fields(self):
-        res = self.client.post(LOGIN_URL, {'email': 'test@gmail.com',
-                                                    'password': ''})
+        res = self.client.post(LOGIN_URL, {'email': 'test@gmail.com'})
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
