@@ -3,8 +3,9 @@ from rest_framework.exceptions import ValidationError
 
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.db import transaction
 
-from users.models import UserInfo
+from users.models import UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -31,6 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        user = get_user_model().objects.create_user(**validated_data)
-        UserInfo.objects.create(user=user)
+        with transaction.atomic():
+            user = get_user_model().objects.create_user(**validated_data)
+            UserProfile.objects.create(user=user)
         return user
