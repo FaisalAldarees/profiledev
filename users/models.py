@@ -4,11 +4,8 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.utils.functional import cached_property
-
-from rest_framework.serializers import ValidationError
 
 import uuid
 import os
@@ -47,11 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class UserProfile(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="info",
-        default=None,
-        null=True,
+        User, on_delete=models.CASCADE, related_name="profile",
     )
     avatar = models.ImageField(
         default="media/uploads/avatar/download.jpeg",
@@ -76,31 +69,36 @@ class UserProfile(models.Model):
 
     @cached_property
     def social_urls(self):
-        urls = [{}, {}, {}, {}]
-        count = 0
+        urls = []
         for i in self.social_info:
-            if i["name"].lower() not in [
-                "twitter",
-                "github",
-                "stackoverflow",
-                "linkedin",
-            ]:
-                raise ValidationError(_("Website not supported"))
-
             if i["name"] == "twitter":
-                urls[count]["name"] = "twitter"
-                urls[count]["url"] = f'www.twitter.com/{i["username"]}'
-
+                urls.append(
+                    {
+                        "name": "twitter",
+                        "url": "www.twitter.com/{0}".format(i["username"]),
+                    }
+                )
             if i["name"] == "github":
-                urls[count]["name"] = "github"
-                urls[count]["url"] = f'www.github.com/{i["username"]}'
-
+                urls.append(
+                    {
+                        "name": "github",
+                        "url": "www.github.com/{0}".format(i["username"]),
+                    }
+                )
             if i["name"] == "stackoverflow":
-                urls[count]["name"] = "stackoverflow"
-                urls[count]["url"] = f'www.stackoverflow.com/{i["username"]}'
-
+                urls.append(
+                    {
+                        "name": "stackoverflow",
+                        "url": "www.stackoverflow.com/{0}".format(
+                            i["username"]
+                        ),
+                    }
+                )
             if i["name"] == "linkedin":
-                urls[count]["name"] = "linkedin"
-                urls[count]["url"] = f'www.linkedin.com/{i["username"]}'
-            count += 1
+                urls.append(
+                    {
+                        "name": "linkedin",
+                        "url": "www.linkedin.com/{0}".format(i["username"]),
+                    }
+                )
         return urls

@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
+from datetime import date
+
 
 class UserAvatarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,15 +37,20 @@ class JobExperienceSerializer(serializers.Serializer):
     def validate(self, data):
         if "from_date" and "to_date" in data:
             if data["to_date"] < data["from_date"]:
-                raise ValidationError(_("from_date in grater than to_date"))
+                raise ValidationError(_("from_date is grater than to_date"))
         if "company" not in data:
             raise ValidationError(_("company field is required"))
         return data
 
     def validate_from_date(self, value):
+        if value > date.today():
+            raise ValidationError(_("the from_date is invalid"))
+
         return value.strftime("%Y-%m-%d")
 
     def validate_to_date(self, value):
+        if value > date.today():
+            raise ValidationError(_("the to_date is invalid"))
         return value.strftime("%Y-%m-%d")
 
 
@@ -53,6 +60,16 @@ class SocialInfoSerializer(serializers.Serializer):
 
     class Meta:
         fields = ["name", "username"]
+
+    def validate_name(self, value):
+        if value.lower() not in [
+            "twitter",
+            "github",
+            "stackoverflow",
+            "linkedin",
+        ]:
+            raise ValidationError(_("Website not supported"))
+        return value
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
