@@ -225,7 +225,7 @@ class UserInfoTests(TestCase):
             "skills": ["Java", "Python", "HTML"],
         }
         res1 = self.client.patch(USER_INFO_URL, payload, format="json")
-        res2 = self.client.patch(USER_INFO_URL, payload, format="json")
+        res2 = self.client.put(USER_INFO_URL, payload, format="json")
 
         self.assertEqual(res1.status_code, status.HTTP_200_OK)
         self.assertEqual(res2.status_code, status.HTTP_200_OK)
