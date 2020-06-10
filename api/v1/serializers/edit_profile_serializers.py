@@ -56,10 +56,10 @@ class JobExperienceSerializer(serializers.Serializer):
 
 class SocialInfoSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
-    username = serializers.CharField(max_length=255)
+    url = serializers.CharField(max_length=255)
 
     class Meta:
-        fields = ["name", "username"]
+        fields = ["name", "url"]
 
     def validate_name(self, value):
         if value.lower() not in [
@@ -77,7 +77,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         many=True, required=False, allow_null=True
     )
     social_info = SocialInfoSerializer(
-        many=True, required=False, allow_null=True, write_only=True
+        many=True, required=False, allow_null=True
     )
     skills = serializers.ListField(
         child=serializers.CharField(), required=False, allow_null=True
@@ -88,9 +88,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = [
             "job_experiences",
             "social_info",
-            "social_urls",
             "about",
             "skills",
             "user",
         ]
-        read_only_fields = ("user", "social_urls")
+        read_only_fields = ("user",)

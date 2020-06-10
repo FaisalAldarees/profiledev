@@ -5,7 +5,6 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.utils.functional import cached_property
 
 import uuid
 import os
@@ -66,39 +65,3 @@ class UserProfile(models.Model):
     skills = ArrayField(
         models.CharField(max_length=32), default=None, blank=True, null=True
     )
-
-    @cached_property
-    def social_urls(self):
-        urls = []
-        for i in self.social_info:
-            if i["name"] == "twitter":
-                urls.append(
-                    {
-                        "name": "twitter",
-                        "url": "www.twitter.com/{0}".format(i["username"]),
-                    }
-                )
-            if i["name"] == "github":
-                urls.append(
-                    {
-                        "name": "github",
-                        "url": "www.github.com/{0}".format(i["username"]),
-                    }
-                )
-            if i["name"] == "stackoverflow":
-                urls.append(
-                    {
-                        "name": "stackoverflow",
-                        "url": "www.stackoverflow.com/{0}".format(
-                            i["username"]
-                        ),
-                    }
-                )
-            if i["name"] == "linkedin":
-                urls.append(
-                    {
-                        "name": "linkedin",
-                        "url": "www.linkedin.com/{0}".format(i["username"]),
-                    }
-                )
-        return urls

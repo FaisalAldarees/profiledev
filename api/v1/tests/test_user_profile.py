@@ -52,10 +52,19 @@ class UserInfoTests(TestCase):
                 },
             ],
             "social_info": [
-                {"name": "twitter", "username": "faisalaldarees"},
-                {"name": "github", "username": "faisalaldarees"},
-                {"name": "stackoverflow", "username": "faisalaldarees"},
-                {"name": "linkedin", "username": "faisalaldarees"},
+                {"name": "twitter", "url": "www.twitter.com/faisalaldarees"},
+                {
+                    "name": "github",
+                    "url": "www.github.com/faisalaldarees",
+                },
+                {
+                    "name": "stackoverflow",
+                    "url": "www.stackoverflow.com/faisalaldarees",
+                },
+                {
+                    "name": "linkedin",
+                    "url": "www.linkedin.com/faisalaldarees",
+                },
             ],
             "about": "This is a test about",
             "skills": ["Java", "Python", "HTML"],
@@ -81,7 +90,7 @@ class UserInfoTests(TestCase):
                     "to_date": "2020-02-02",
                 },
             ],
-            "social_urls": [
+            "social_info": [
                 {"name": "twitter", "url": "www.twitter.com/faisalaldarees"},
                 {"name": "github", "url": "www.github.com/faisalaldarees"},
                 {
@@ -100,7 +109,9 @@ class UserInfoTests(TestCase):
 
     def test_social_site_not_supported(self):
         payload = {
-            "social_info": [{"name": "youtube", "username": "faisalaldarees"}]
+            "social_info": [
+                {"name": "youtube", "url": "www.youtube.com/faisalaldarees"}
+            ]
         }
 
         res = self.client.patch(USER_INFO_URL, payload, format="json")
@@ -140,12 +151,7 @@ class UserInfoTests(TestCase):
                     "from_date": "2020-1-1",
                     "to_date": "2019-2-2",
                 },
-            ],
-            "social_info": [
-                {"name": "youtube", "username": "faisalaldarees"},
-            ],
-            "about": "This is a test about",
-            "skills": ["Java", "Python", "HTML"],
+            ]
         }
         res = self.client.patch(USER_INFO_URL, payload, format="json")
 
@@ -216,10 +222,19 @@ class UserInfoTests(TestCase):
                 },
             ],
             "social_info": [
-                {"name": "twitter", "username": "faisalaldarees"},
-                {"name": "github", "username": "faisalaldarees"},
-                {"name": "stackoverflow", "username": "faisalaldarees"},
-                {"name": "linkedin", "username": "faisalaldarees"},
+                {"name": "twitter", "url": "www.twitter.com/faisalaldarees"},
+                {
+                    "name": "github",
+                    "url": "www.github.com/faisalaldarees",
+                },
+                {
+                    "name": "stackoverflow",
+                    "url": "www.stackoverflow.com/faisalaldarees",
+                },
+                {
+                    "name": "linkedin",
+                    "url": "www.linkedin.com/faisalaldarees",
+                },
             ],
             "about": "This is a test about",
             "skills": ["Java", "Python", "HTML"],
