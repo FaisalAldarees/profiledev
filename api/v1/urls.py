@@ -1,6 +1,6 @@
 from django.urls import path
 
-from api.v1.views import registration_views, login_views
+from api.v1.views import registration_views, login_views, edit_profile_views
 
 
 app_name = "api"
@@ -11,5 +11,25 @@ urlpatterns = [
         registration_views.CreateUserView.as_view(),
         name="registration",
     ),
-    path('users/login/', login_views.CreateTokenView.as_view(), name='login')
+    path("users/login/", login_views.CreateTokenView.as_view(), name="login"),
+    path(
+        "users/avatar/",
+        edit_profile_views.AvatarUpdate.as_view(),
+        name="avatar_update",
+    ),
+    path(
+        "users/<int:user_id>/avatar/",
+        edit_profile_views.AvatarRetrieve.as_view(),
+        name="avatar_retrive",
+    ),
+    path(
+        "users/user_profile/",
+        edit_profile_views.UserProfileUpdate.as_view(),
+        name="user_profile_update",
+    ),
+    path(
+        "users/<int:user_id>/user_profile",
+        edit_profile_views.UserProfileRetrive.as_view(),
+        name="user_profile_retrive",
+    ),
 ]
