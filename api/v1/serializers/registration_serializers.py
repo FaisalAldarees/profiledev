@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
             UserProfile.objects.create(user=user)
             email = EmailMessage(
                 "Verify your email",
-                "CLick the link http://127.0.0.1:8000/email/verify/{0}".format(
+                "CLick the link http://127.0.0.1:8000/v1/email/verify/{0}".format(
                     user_email_verification.email_token
                 ),
                 to=[user.email],
