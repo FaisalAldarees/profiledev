@@ -1,6 +1,11 @@
 from django.urls import path
 
-from api.v1.views import registration_views, login_views, edit_profile_views
+from api.v1.views import (
+    registration_views,
+    login_views,
+    edit_profile_views,
+    email_verification_views,
+)
 
 
 app_name = "api"
@@ -31,5 +36,10 @@ urlpatterns = [
         "users/<int:user_id>/user_profile",
         edit_profile_views.UserProfileRetrive.as_view(),
         name="user_profile_retrive",
+    ),
+    path(
+        "email/verify/<str:email_token>/",
+        email_verification_views.VerifyEmail.as_view(),
+        name="email_verification",
     ),
 ]

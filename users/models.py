@@ -36,9 +36,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=False)
     objects = UserManager()
 
     USERNAME_FIELD = "email"
+
+
+class UserEmailVerification(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    email_token = models.CharField(max_length=128)
 
 
 class UserProfile(models.Model):
