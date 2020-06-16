@@ -6,23 +6,16 @@ from rest_framework import serializers
 
 class AuthTokenSerializer(serializers.Serializer):
     email = serializers.CharField()
-    password = serializers.CharField(
-        style={'input_type': 'password'},
-        trim_whitespace=False
-    )
+    password = serializers.CharField(style={"input_type": "password"}, trim_whitespace=False)
 
     def validate(self, attrs):
-        email = attrs.get('email')
-        password = attrs.get('password')
+        email = attrs.get("email")
+        password = attrs.get("password")
 
-        user = authenticate(
-            request=self.context.get('request'),
-            username=email,
-            password=password
-        )
+        user = authenticate(request=self.context.get("request"), username=email, password=password)
         if not user:
             msg = _("Invalid credentials")
-            raise serializers.ValidationError(msg, code='authentication')
+            raise serializers.ValidationError(msg, code="authentication")
 
-        attrs['user'] = user
+        attrs["user"] = user
         return attrs

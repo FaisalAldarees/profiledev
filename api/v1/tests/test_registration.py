@@ -42,13 +42,9 @@ class RegistrationTests(TestCase):
             "password": "123456",
         }
         create_user(**payload)
-        res = self.client.post(
-            CREATE_USER_URL, payload, confirm_password="123456"
-        )
+        res = self.client.post(CREATE_USER_URL, payload, confirm_password="123456")
 
-        self.assertEqual(
-            "user with this email already exists.", str(res.data["email"][0])
-        )
+        self.assertEqual("user with this email already exists.", str(res.data["email"][0]))
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_password_to_short(self):
@@ -63,13 +59,10 @@ class RegistrationTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            "Ensure this field has at least 5 characters.",
-            str(res.data["password"][0]),
+            "Ensure this field has at least 5 characters.", str(res.data["password"][0]),
         )
 
-        user_exists = (
-            get_user_model().objects.filter(email=payload["email"]).exists()
-        )
+        user_exists = get_user_model().objects.filter(email=payload["email"]).exists()
 
         self.assertFalse(user_exists)
 
@@ -84,9 +77,7 @@ class RegistrationTests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            "Passwords does not match up", str(res.data["non_field_errors"][0])
-        )
+        self.assertEqual("Passwords does not match up", str(res.data["non_field_errors"][0]))
 
     def test_user_email_not_provided(self):
         payload = {
@@ -99,9 +90,7 @@ class RegistrationTests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            "This field may not be blank.", str(res.data["email"][0])
-        )
+        self.assertEqual("This field may not be blank.", str(res.data["email"][0]))
 
     def test_user_first_name_not_provided(self):
         payload = {
@@ -114,9 +103,7 @@ class RegistrationTests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            "This field may not be blank.", str(res.data["first_name"][0])
-        )
+        self.assertEqual("This field may not be blank.", str(res.data["first_name"][0]))
 
     def test_user_last_name_not_provided(self):
         payload = {
@@ -129,9 +116,7 @@ class RegistrationTests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            "This field may not be blank.", str(res.data["last_name"][0])
-        )
+        self.assertEqual("This field may not be blank.", str(res.data["last_name"][0]))
 
     def test_user_password_not_provided(self):
         payload = {
@@ -144,9 +129,7 @@ class RegistrationTests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            "This field may not be blank.", str(res.data["password"][0])
-        )
+        self.assertEqual("This field may not be blank.", str(res.data["password"][0]))
 
     def test_user_confirm_password_not_provided(self):
         payload = {
@@ -160,6 +143,5 @@ class RegistrationTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            "This field may not be blank.",
-            str(res.data["confirm_password"][0]),
+            "This field may not be blank.", str(res.data["confirm_password"][0]),
         )

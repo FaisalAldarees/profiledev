@@ -13,9 +13,7 @@ import uuid
 
 
 class UserSerializer(serializers.ModelSerializer):
-    confirm_password = serializers.CharField(
-        allow_blank=False, write_only=True
-    )
+    confirm_password = serializers.CharField(allow_blank=False, write_only=True)
 
     class Meta:
         model = get_user_model()
@@ -38,15 +36,11 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         with transaction.atomic():
             user = get_user_model().objects.create_user(**validated_data)
-            user_email_verification = UserEmailVerification.objects.create(
-                user=user, email_token=uuid.uuid4()
-            )
+            user_email_verification = UserEmailVerification.objects.create(user=user, email_token=uuid.uuid4())
             UserProfile.objects.create(user=user)
             email = EmailMessage(
                 "Verify your email",
-                "CLick the link http://127.0.0.1:8000/v1/email/verify/{0}".format(
-                    user_email_verification.email_token
-                ),
+                "CLick the link http://127.0.0.1:8000/v1/email/verify/{0}".format(user_email_verification.email_token),
                 to=[user.email],
             )
             email.send()

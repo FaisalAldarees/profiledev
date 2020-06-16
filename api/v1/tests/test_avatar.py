@@ -21,13 +21,9 @@ class AvatarTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            **{
-                "email": "Bob@gmail.com",
-                "first_name": "Bob",
-                "last_name": "Alice",
-                "password": "123456",
-            }
+            **{"email": "Bob@gmail.com", "first_name": "Bob", "last_name": "Alice", "password": "123456"}
         )
+        self.user.is_email_verified = True
         self.client.force_authenticate(self.user)
         self.user_info = UserProfile.objects.create(user=self.user)
 
@@ -48,17 +44,13 @@ class AvatarTests(TestCase):
             img = Image.new("RGB", (10, 10))
             img.save(ntf, format="JPEG")
             ntf.seek(0)
-            res = self.client.patch(
-                UPDATE_AVATAR_URL, {"avatar": ntf}, format="multipart"
-            )
+            res = self.client.patch(UPDATE_AVATAR_URL, {"avatar": ntf}, format="multipart")
         self.user_info.refresh_from_db()
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertIn("avatar", res.data)
         self.assertTrue(os.path.exists(self.user_info.avatar.path))
 
     def test_upload_image_bad_request(self):
-        res = self.client.patch(
-            UPDATE_AVATAR_URL, {"avatar": "notimage"}, format="multipart"
-        )
+        res = self.client.patch(UPDATE_AVATAR_URL, {"avatar": "notimage"}, format="multipart")
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

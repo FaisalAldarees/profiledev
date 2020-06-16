@@ -14,6 +14,12 @@ class UserAvatarSerializer(serializers.ModelSerializer):
         fields = ["avatar", "user"]
         read_only_fields = ("user",)
 
+    def validate(self, data):
+        if self.context["request"].user.is_email_verified:
+            return data
+        else:
+            raise ValidationError(_("User is not verified"))
+
 
 class JobExperienceSerializer(serializers.Serializer):
 
@@ -73,15 +79,9 @@ class SocialInfoSerializer(serializers.Serializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    job_experiences = JobExperienceSerializer(
-        many=True, required=False, allow_null=True
-    )
-    social_info = SocialInfoSerializer(
-        many=True, required=False, allow_null=True
-    )
-    skills = serializers.ListField(
-        child=serializers.CharField(), required=False, allow_null=True
-    )
+    job_experiences = JobExperienceSerializer(many=True, required=False, allow_null=True)
+    social_info = SocialInfoSerializer(many=True, required=False, allow_null=True)
+    skills = serializers.ListField(child=serializers.CharField(), required=False, allow_null=True)
 
     class Meta:
         model = UserProfile
@@ -93,3 +93,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "user",
         ]
         read_only_fields = ("user",)
+
+    def validate(self, data):
+        if self.context["request"].user.is_email_verified:
+            return data
+        else:
+            raise ValidationError(_("User is not verified"))
