@@ -45,6 +45,7 @@ class ResentEmail(generics.RetrieveAPIView):
     model = User
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self):
         wait_time = timezone.now() - timedelta(seconds=30)
