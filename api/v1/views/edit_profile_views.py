@@ -27,11 +27,9 @@ class AvatarRetrieve(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         if not self.get_object().user.is_email_verified:
             err = {"error": "user not verified"}
-            return Response(err, status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response(err, status=status.HTTP_404_NOT_FOUND)
         else:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
+            return super().retrieve()
 
 
 class UserProfileUpdate(generics.UpdateAPIView):
