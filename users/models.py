@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class UserEmailVerification(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_email_verification')
     email_token = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now=True)
 

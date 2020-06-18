@@ -1,5 +1,4 @@
-from rest_framework import generics, permissions, status
-from rest_framework.response import Response
+from rest_framework import generics, permissions, exceptions
 
 from api.v1.serializers.edit_profile_serializers import (
     UserAvatarSerializer,
@@ -26,8 +25,7 @@ class AvatarRetrieve(generics.RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         if not self.get_object().user.is_email_verified:
-            err = {"error": "user not verified"}
-            return Response(err, status=status.HTTP_404_NOT_FOUND)
+            raise exceptions.NotFound()
         else:
             return super().retrieve()
 
@@ -50,9 +48,6 @@ class UserProfileRetrive(generics.RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         if not self.get_object().user.is_email_verified:
-            err = {"error": "user not verified"}
-            return Response(err, status=status.HTTP_406_NOT_ACCEPTABLE)
+            raise exceptions.NotFound()
         else:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
+            return super().retrieve(self.request)

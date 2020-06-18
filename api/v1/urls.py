@@ -24,7 +24,7 @@ urlpatterns = [
     ),
     path(
         "users/email/send_email_verification/",
-        email_verification_views.ResentEmail.as_view(),
+        email_verification_views.ResendEmail.as_view(),
         name="resend_email_verification",
     ),
 ]

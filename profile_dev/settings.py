@@ -25,6 +25,8 @@ SECRET_KEY = '9_v39w#t6=djx@l@umi*i#54apd=r=)d-rclu+dleyj2h(bd*^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+HOST = 'http://127.0.0.1:8000'
+
 ALLOWED_HOSTS = []
 
 
@@ -153,7 +155,3 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'profiledotdev@gmail.com'
 EMAIL_HOST_PASSWORD = '123321415263Profile'
-
-# Network
-
-HOST = 'http://127.0.0.1:8000'
