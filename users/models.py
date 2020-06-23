@@ -36,32 +36,23 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    is_email_verified = models.BooleanField(default=False)
     objects = UserManager()
 
     USERNAME_FIELD = "email"
 
 
+class UserEmailVerification(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_email_verification')
+    email_token = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now=True)
+
+
 class UserProfile(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="profile",
-    )
-    avatar = models.ImageField(
-        default="media/uploads/avatar/download.jpeg",
-        upload_to=avatar_image_file_path,
-    )
-    job_experiences = ArrayField(
-        JSONField(default=None, blank=True),
-        default=None,
-        blank=True,
-        null=True,
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="profile",)
+    avatar = models.ImageField(default="media/uploads/avatar/download.jpeg", upload_to=avatar_image_file_path,)
+    job_experiences = ArrayField(JSONField(default=None, blank=True), default=None, blank=True, null=True,)
     about = models.TextField(default=None, null=True)
-    social_info = ArrayField(
-        JSONField(default=None, blank=True),
-        default=None,
-        blank=True,
-        null=True,
-    )
-    skills = ArrayField(
-        models.CharField(max_length=32), default=None, blank=True, null=True
-    )
+    social_info = ArrayField(JSONField(default=None, blank=True), default=None, blank=True, null=True,)
+    skills = ArrayField(models.CharField(max_length=32), default=None, blank=True, null=True)

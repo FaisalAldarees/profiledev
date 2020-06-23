@@ -1,6 +1,6 @@
 from rest_framework.settings import api_settings
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework import permissions, authentication
+from rest_framework import permissions
 
 from api.v1.serializers.login_serializers import AuthTokenSerializer
 

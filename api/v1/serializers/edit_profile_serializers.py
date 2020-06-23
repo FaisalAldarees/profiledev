@@ -73,15 +73,9 @@ class SocialInfoSerializer(serializers.Serializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    job_experiences = JobExperienceSerializer(
-        many=True, required=False, allow_null=True
-    )
-    social_info = SocialInfoSerializer(
-        many=True, required=False, allow_null=True
-    )
-    skills = serializers.ListField(
-        child=serializers.CharField(), required=False, allow_null=True
-    )
+    job_experiences = JobExperienceSerializer(many=True, required=False, allow_null=True)
+    social_info = SocialInfoSerializer(many=True, required=False, allow_null=True)
+    skills = serializers.ListField(child=serializers.CharField(), required=False, allow_null=True)
 
     class Meta:
         model = UserProfile

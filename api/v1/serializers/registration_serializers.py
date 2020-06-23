@@ -5,13 +5,15 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
-from users.models import UserProfile
+from users.models import UserProfile, UserEmailVerification
+
+from api.v1.utils import send_verification_email
+
+import uuid
 
 
 class UserSerializer(serializers.ModelSerializer):
-    confirm_password = serializers.CharField(
-        allow_blank=False, write_only=True
-    )
+    confirm_password = serializers.CharField(allow_blank=False, write_only=True)
 
     class Meta:
         model = get_user_model()
@@ -34,5 +36,8 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         with transaction.atomic():
             user = get_user_model().objects.create_user(**validated_data)
+            user_email_verification = UserEmailVerification.objects.create(user=user, email_token=uuid.uuid4())
             UserProfile.objects.create(user=user)
+            send_verification_email(user_email_verification)
+
         return user

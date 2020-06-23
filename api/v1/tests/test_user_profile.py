@@ -8,20 +8,16 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 
-USER_INFO_URL = reverse("api:user_profile_update")
+USER_INFO_URL = reverse("api:profile_update")
 
 
 def create_user(**params):
     user = get_user_model().objects.create_user(
-        **{
-            "email": "Bob@gmail.com",
-            "first_name": "Bob",
-            "last_name": "Alice",
-            "password": "123456",
-        }
+        **{"email": "Bob@gmail.com", "first_name": "Bob", "last_name": "Alice", "password": "123456"}
     )
 
     UserProfile.objects.create(user=user)
+    user.is_email_verified = True
     return user
 
 
@@ -53,18 +49,9 @@ class UserInfoTests(TestCase):
             ],
             "social_info": [
                 {"name": "twitter", "url": "www.twitter.com/faisalaldarees"},
-                {
-                    "name": "github",
-                    "url": "www.github.com/faisalaldarees",
-                },
-                {
-                    "name": "stackoverflow",
-                    "url": "www.stackoverflow.com/faisalaldarees",
-                },
-                {
-                    "name": "linkedin",
-                    "url": "www.linkedin.com/faisalaldarees",
-                },
+                {"name": "github", "url": "www.github.com/faisalaldarees"},
+                {"name": "stackoverflow", "url": "www.stackoverflow.com/faisalaldarees"},
+                {"name": "linkedin", "url": "www.linkedin.com/faisalaldarees"},
             ],
             "about": "This is a test about",
             "skills": ["Java", "Python", "HTML"],
@@ -93,10 +80,7 @@ class UserInfoTests(TestCase):
             "social_info": [
                 {"name": "twitter", "url": "www.twitter.com/faisalaldarees"},
                 {"name": "github", "url": "www.github.com/faisalaldarees"},
-                {
-                    "name": "stackoverflow",
-                    "url": "www.stackoverflow.com/faisalaldarees",
-                },
+                {"name": "stackoverflow", "url": "www.stackoverflow.com/faisalaldarees"},
                 {"name": "linkedin", "url": "www.linkedin.com/faisalaldarees"},
             ],
             "about": "This is a test about",
@@ -108,18 +92,12 @@ class UserInfoTests(TestCase):
         self.assertEqual(res.json(), exp_res)
 
     def test_social_site_not_supported(self):
-        payload = {
-            "social_info": [
-                {"name": "youtube", "url": "www.youtube.com/faisalaldarees"}
-            ]
-        }
+        payload = {"social_info": [{"name": "youtube", "url": "www.youtube.com/faisalaldarees"}]}
 
         res = self.client.patch(USER_INFO_URL, payload, format="json")
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn(
-            "Website not supported", res.json()["social_info"][0]["name"]
-        )
+        self.assertIn("Website not supported", res.json()["social_info"][0]["name"])
 
     def test_required_fields_not_given(self):
         payload = {
@@ -137,8 +115,7 @@ class UserInfoTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
-            "company field is required",
-            res.json()["job_experiences"][0]["non_field_errors"],
+            "company field is required", res.json()["job_experiences"][0]["non_field_errors"],
         )
 
     def test_from_date_greater_than_to_date(self):
@@ -157,8 +134,7 @@ class UserInfoTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
-            "from_date is grater than to_date",
-            res.json()["job_experiences"][0]["non_field_errors"],
+            "from_date is grater than to_date", res.json()["job_experiences"][0]["non_field_errors"],
         )
 
     def test_from_date_is_invalid(self):
@@ -177,8 +153,7 @@ class UserInfoTests(TestCase):
         res = self.client.patch(USER_INFO_URL, payload, format="json")
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
-            "the from_date is invalid",
-            res.json()["job_experiences"][0]["from_date"],
+            "the from_date is invalid", res.json()["job_experiences"][0]["from_date"],
         )
 
     def test_to_date_is_invalid(self):
@@ -197,8 +172,7 @@ class UserInfoTests(TestCase):
         res = self.client.patch(USER_INFO_URL, payload, format="json")
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
-            "the to_date is invalid",
-            res.json()["job_experiences"][0]["to_date"],
+            "the to_date is invalid", res.json()["job_experiences"][0]["to_date"],
         )
 
     def test_put_patch(self):
@@ -223,18 +197,9 @@ class UserInfoTests(TestCase):
             ],
             "social_info": [
                 {"name": "twitter", "url": "www.twitter.com/faisalaldarees"},
-                {
-                    "name": "github",
-                    "url": "www.github.com/faisalaldarees",
-                },
-                {
-                    "name": "stackoverflow",
-                    "url": "www.stackoverflow.com/faisalaldarees",
-                },
-                {
-                    "name": "linkedin",
-                    "url": "www.linkedin.com/faisalaldarees",
-                },
+                {"name": "github", "url": "www.github.com/faisalaldarees"},
+                {"name": "stackoverflow", "url": "www.stackoverflow.com/faisalaldarees"},
+                {"name": "linkedin", "url": "www.linkedin.com/faisalaldarees"},
             ],
             "about": "This is a test about",
             "skills": ["Java", "Python", "HTML"],
