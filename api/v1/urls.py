@@ -18,7 +18,7 @@ urlpatterns = [
     path("users/profile/", edit_profile_views.UserProfileUpdate.as_view(), name="profile_update",),
     path("users/<int:user_id>/profile/", edit_profile_views.UserProfileRetrive.as_view(), name="profile_retrive",),
     path(
-        "users/email_verification/<str:email_token>/",
+        "users/email/email_verification/<str:email_token>/",
         email_verification_views.VerifyEmail.as_view(),
         name="email_verification",
     ),

@@ -27,8 +27,9 @@ class VerifyEmail(generics.RetrieveAPIView):
             user.save()
 
         if not user.is_email_verified:
-            return Response({"verified": False}, status=status.HTTP_408_REQUEST_TIMEOUT)
+            return Response({"verified": False}, status=status.HTTP_400_BAD_REQUEST)
         else:
+            user_email_verification.delete()
             return Response({"verified": True}, status=status.HTTP_200_OK)
 
 
