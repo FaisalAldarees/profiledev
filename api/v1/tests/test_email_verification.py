@@ -6,27 +6,21 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 from rest_framework import status
 
-from users.models import UserEmailVerification
-
 from unittest.mock import patch
 
 
 CREATE_USER_URL = reverse("api:registration")
+RESEND_EMAIL_URL = reverse("api:resend_email_verification")
 
 
 class EmailVerificationTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(
-            **{"email": "Bob@gmail.com", "first_name": "Bob", "last_name": "Alice", "password": "123456"}
-        )
-        self.client.force_authenticate(self.user)
-        self.user_email_verification = UserEmailVerification.objects.create(user=self.user)
 
     @patch("api.v1.serializers.registration_serializers.send_verification_email")
     def test_email_sent_and_verified(self, sve):
         payload = {
-            "email": "faisalaldarees@gmail.com",
+            "email": "test@gmail.com",
             "first_name": "Bob",
             "last_name": "Alice",
             "password": "123456",
@@ -44,7 +38,7 @@ class EmailVerificationTests(TestCase):
     @patch("api.v1.serializers.registration_serializers.send_verification_email")
     def test_link_expired(self, sve):
         payload = {
-            "email": "faisalaldarees@gmail.com",
+            "email": "test@gmail.com",
             "first_name": "Bob",
             "last_name": "Alice",
             "password": "123456",
@@ -71,7 +65,7 @@ class EmailVerificationTests(TestCase):
     @patch("api.v1.serializers.registration_serializers.send_verification_email")
     def test_multiple_verifications(self, sve):
         payload = {
-            "email": "faisalaldarees@gmail.com",
+            "email": "test@gmail.com",
             "first_name": "Bob",
             "last_name": "Alice",
             "password": "123456",
@@ -100,3 +94,54 @@ class EmailVerificationTests(TestCase):
             "/v1/users/email/email_verification/{0}/".format('wrong_path')
         )
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch("api.v1.views.email_verification_views.send_verification_email")
+    def test_resend_email(self, sve):
+        payload = {
+            "email": "test@gmail.com",
+            "first_name": "Bob",
+            "last_name": "Alice",
+            "password": "123456",
+            "confirm_password": "123456",
+        }
+
+        res1 = self.client.post(CREATE_USER_URL, payload)
+
+        user = get_user_model().objects.get(email=payload["email"])
+        user.user_email_verification.created_at = timezone.now() - timezone.timedelta(seconds=31)
+        user.user_email_verification.save()
+
+        self.client.force_authenticate(user)
+        res2 = self.client.get(RESEND_EMAIL_URL)
+
+        self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res2.status_code, status.HTTP_200_OK)
+        self.assertEqual(sve.call_count, 1)
+
+    @patch("api.v1.views.email_verification_views.send_verification_email")
+    def test_multiple_resend_email(self, sve):
+        payload = {
+            "email": "test@gmail.com",
+            "first_name": "Bob",
+            "last_name": "Alice",
+            "password": "123456",
+            "confirm_password": "123456",
+        }
+
+        res1 = self.client.post(CREATE_USER_URL, payload)
+
+        user = get_user_model().objects.get(email=payload["email"])
+        user.user_email_verification.created_at = timezone.now() - timezone.timedelta(seconds=31)
+        user.user_email_verification.save()
+
+        self.client.force_authenticate(user)
+        self.client.get(RESEND_EMAIL_URL)
+
+        user.user_email_verification.created_at = timezone.now() - timezone.timedelta(seconds=29)
+        user.user_email_verification.save()
+
+        res2 = self.client.get(RESEND_EMAIL_URL)
+
+        self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res2.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(sve.call_count, 1)
