@@ -28,9 +28,13 @@ class EmailVerificationTests(TestCase):
         }
 
         res = self.client.post(CREATE_USER_URL, payload)
+
         user = get_user_model().objects.get(email=payload["email"])
+
         self.client.get("/v1/users/email/email_verification/{0}/".format(user.user_email_verification.email_token))
+
         user.refresh_from_db()
+
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertTrue(user.is_email_verified)
         self.assertEqual(sve.call_count, 1)
@@ -77,7 +81,6 @@ class EmailVerificationTests(TestCase):
         user = get_user_model().objects.get(email=payload["email"])
 
         self.client.get("/v1/users/email/email_verification/{0}/".format(user.user_email_verification.email_token))
-
         res2 = self.client.get(
             "/v1/users/email/email_verification/{0}/".format(user.user_email_verification.email_token)
         )
@@ -90,9 +93,8 @@ class EmailVerificationTests(TestCase):
         self.assertEqual(sve.call_count, 1)
 
     def test_wrong_verification_link(self):
-        res = self.client.get(
-            "/v1/users/email/email_verification/{0}/".format('wrong_path')
-        )
+        res = self.client.get("/v1/users/email/email_verification/{0}/".format("wrong_path"))
+
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
     @patch("api.v1.views.email_verification_views.send_verification_email")

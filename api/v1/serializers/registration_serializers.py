@@ -7,7 +7,7 @@ from django.db import transaction
 
 from users.models import UserProfile, UserEmailVerification
 
-from api.v1.utils import send_verification_email
+from api.v1.tasks import send_verification_email_task
 
 import uuid
 
@@ -36,8 +36,8 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         with transaction.atomic():
             user = get_user_model().objects.create_user(**validated_data)
-            user_email_verification = UserEmailVerification.objects.create(user=user, email_token=uuid.uuid4())
+            UserEmailVerification.objects.create(user=user, email_token=uuid.uuid4())
             UserProfile.objects.create(user=user)
-            send_verification_email(user_email_verification)
+            send_verification_email_task.delay(user.email)
 
         return user
