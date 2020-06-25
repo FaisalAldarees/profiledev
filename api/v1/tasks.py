@@ -21,4 +21,4 @@ def send_verification_email_task(user_email):
 )
 def delete_unverified_users_task():
     delete_unverified_users()
-    logger.info("Saved image from Flickr")
+    logger.info("Users deleted")
