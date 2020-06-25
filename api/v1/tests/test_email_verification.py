@@ -17,8 +17,8 @@ class EmailVerificationTests(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    @patch("api.v1.serializers.registration_serializers.send_verification_email")
-    def test_email_sent_and_verified(self, sve):
+    @patch("api.v1.serializers.registration_serializers.send_verification_email_task.delay")
+    def test_email_sent_and_verified(self, se):
         payload = {
             "email": "test@gmail.com",
             "first_name": "Bob",
@@ -37,10 +37,10 @@ class EmailVerificationTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertTrue(user.is_email_verified)
-        self.assertEqual(sve.call_count, 1)
+        self.assertEqual(se.call_count, 1)
 
-    @patch("api.v1.serializers.registration_serializers.send_verification_email")
-    def test_link_expired(self, sve):
+    @patch("api.v1.serializers.registration_serializers.send_verification_email_task.delay")
+    def test_link_expired(self, se):
         payload = {
             "email": "test@gmail.com",
             "first_name": "Bob",
@@ -64,10 +64,10 @@ class EmailVerificationTests(TestCase):
         self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res2.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(user.is_email_verified)
-        self.assertEqual(sve.call_count, 1)
+        self.assertEqual(se.call_count, 1)
 
-    @patch("api.v1.serializers.registration_serializers.send_verification_email")
-    def test_multiple_verifications(self, sve):
+    @patch("api.v1.serializers.registration_serializers.send_verification_email_task.delay")
+    def test_multiple_verifications(self, se):
         payload = {
             "email": "test@gmail.com",
             "first_name": "Bob",
@@ -90,15 +90,15 @@ class EmailVerificationTests(TestCase):
         self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res2.status_code, status.HTTP_404_NOT_FOUND)
         self.assertTrue(user.is_email_verified)
-        self.assertEqual(sve.call_count, 1)
+        self.assertEqual(se.call_count, 1)
 
     def test_wrong_verification_link(self):
         res = self.client.get("/v1/users/email/email_verification/{0}/".format("wrong_path"))
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
-    @patch("api.v1.views.email_verification_views.send_verification_email")
-    def test_resend_email(self, sve):
+    @patch("api.v1.views.email_verification_views.send_verification_email_task.delay")
+    def test_resend_email(self, se):
         payload = {
             "email": "test@gmail.com",
             "first_name": "Bob",
@@ -118,10 +118,10 @@ class EmailVerificationTests(TestCase):
 
         self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res2.status_code, status.HTTP_200_OK)
-        self.assertEqual(sve.call_count, 1)
+        self.assertEqual(se.call_count, 2)
 
-    @patch("api.v1.views.email_verification_views.send_verification_email")
-    def test_multiple_resend_email(self, sve):
+    @patch("api.v1.views.email_verification_views.send_verification_email_task.delay")
+    def test_multiple_resend_email(self, se):
         payload = {
             "email": "test@gmail.com",
             "first_name": "Bob",
@@ -146,4 +146,4 @@ class EmailVerificationTests(TestCase):
 
         self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res2.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(sve.call_count, 1)
+        self.assertEqual(se.call_count, 2)
