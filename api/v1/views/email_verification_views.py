@@ -2,6 +2,7 @@ from rest_framework import permissions, generics, status
 from rest_framework.response import Response
 
 from django.utils import timezone
+from django.db import transaction
 
 from users.tasks import send_verification_email_task
 
@@ -24,9 +25,10 @@ class VerifyEmail(generics.RetrieveAPIView):
         wait_time = timezone.now() + timedelta(minutes=30)
 
         if user_email_verification.created_at <= wait_time:
-            user.is_email_verified = True
-            user_email_verification.delete()
-            user.save()
+            with transaction.atomic():
+                user.is_email_verified = True
+                user_email_verification.delete()
+                user.save()
 
         if not user.is_email_verified:
             return Response({"verified": False}, status=status.HTTP_400_BAD_REQUEST)
