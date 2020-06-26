@@ -2,6 +2,8 @@
 pycache/
 *.py[cod]
 *$py.class
+.celerybeat.pid
+.celerybeat-schedule
 
 # C extensions
 *.so

@@ -2,8 +2,10 @@ from rest_framework import permissions, generics, status
 from rest_framework.response import Response
 
 from django.utils import timezone
+from django.db import transaction
 
-from api.v1.utils import send_verification_email
+from users.tasks import send_verification_email_task
+
 
 from users.models import UserEmailVerification
 
@@ -23,11 +25,13 @@ class VerifyEmail(generics.RetrieveAPIView):
         wait_time = timezone.now() + timedelta(minutes=30)
 
         if user_email_verification.created_at <= wait_time:
-            user.is_email_verified = True
-            user.save()
+            with transaction.atomic():
+                user.is_email_verified = True
+                user_email_verification.delete()
+                user.save()
 
         if not user.is_email_verified:
-            return Response({"verified": False}, status=status.HTTP_408_REQUEST_TIMEOUT)
+            return Response({"verified": False}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"verified": True}, status=status.HTTP_200_OK)
 
@@ -44,7 +48,7 @@ class ResendEmail(generics.RetrieveAPIView):
         wait_time = timezone.now() - timedelta(seconds=30)
         user_email_verification = self.get_object()
         if user_email_verification.created_at < wait_time:
-            send_verification_email(user_email_verification)
+            send_verification_email_task.delay(user_email_verification.user.email)
             return Response({"resent": True}, status=status.HTTP_200_OK)
         else:
             return Response({"resent": False}, status=status.HTTP_400_BAD_REQUEST)
