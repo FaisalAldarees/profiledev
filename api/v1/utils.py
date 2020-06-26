@@ -34,7 +34,4 @@ def verifiy_recaptcha(token):
     res = requests.post(
         "https://www.google.com/recaptcha/api/siteverify", {"secret": settings.RECAPTCHA_SECRET_KEY, "response": token}
     )
-    if res.json()["success"]:
-        return True
-
-    return False
+    return res.json()["success"]
