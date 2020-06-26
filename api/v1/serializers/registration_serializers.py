@@ -29,16 +29,19 @@ class UserSerializer(serializers.ModelSerializer):
         )
         extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
 
-    def validate(self, data):
-        token = data.pop("recaptcha")
-
-        if not verifiy_recaptcha(token):
+    def validate_recaptcha(self, value):
+        if not verifiy_recaptcha(value):
             raise ValidationError(_("reCAPTCHA is incorrect"))
 
+        return value
+
+    def validate(self, data):
+        data.pop("recaptcha")
         password = data.get("password")
         confirm_password = data.pop("confirm_password")
         if password != confirm_password:
             raise ValidationError(_("Passwords does not match up"))
+
         return data
 
     def create(self, validated_data):
