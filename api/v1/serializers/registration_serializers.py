@@ -6,8 +6,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 
 from users.models import UserProfile, UserEmailVerification
-
-from api.v1.tasks import send_verification_email_task
+from users.tasks import send_verification_email_task
 
 import uuid
 

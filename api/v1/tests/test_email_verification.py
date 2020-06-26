@@ -31,7 +31,9 @@ class EmailVerificationTests(TestCase):
 
         user = get_user_model().objects.get(email=payload["email"])
 
-        self.client.get("/v1/users/email/email_verification/{0}/".format(user.user_email_verification.email_token))
+        self.assertFalse(user.is_email_verified)
+
+        self.client.get("/v1/users/email/verification/{0}/".format(user.user_email_verification.email_token))
 
         user.refresh_from_db()
 
@@ -56,7 +58,7 @@ class EmailVerificationTests(TestCase):
         user.user_email_verification.save()
 
         res2 = self.client.get(
-            "/v1/users/email/email_verification/{0}/".format(user.user_email_verification.email_token)
+            "/v1/users/email/verification/{0}/".format(user.user_email_verification.email_token)
         )
 
         user.refresh_from_db()
@@ -80,9 +82,9 @@ class EmailVerificationTests(TestCase):
 
         user = get_user_model().objects.get(email=payload["email"])
 
-        self.client.get("/v1/users/email/email_verification/{0}/".format(user.user_email_verification.email_token))
+        self.client.get("/v1/users/email/verification/{0}/".format(user.user_email_verification.email_token))
         res2 = self.client.get(
-            "/v1/users/email/email_verification/{0}/".format(user.user_email_verification.email_token)
+            "/v1/users/email/verification/{0}/".format(user.user_email_verification.email_token)
         )
 
         user.refresh_from_db()
@@ -143,7 +145,6 @@ class EmailVerificationTests(TestCase):
         user.user_email_verification.save()
 
         res2 = self.client.get(RESEND_EMAIL_URL)
-
         self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res2.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(se.call_count, 2)

@@ -157,8 +157,8 @@ EMAIL_HOST_USER = 'profiledotdev@gmail.com'
 EMAIL_HOST_PASSWORD = '123321415263Profile'
 
 # CELERY STUFF
-BROKER_URL = 'redis://localhost:32769'
-CELERY_RESULT_BACKEND = 'redis://localhost:32769'
+BROKER_URL = 'redis://localhost:32768'
+CELERY_RESULT_BACKEND = 'redis://localhost:32768'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
