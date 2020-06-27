@@ -27,5 +27,4 @@ urlpatterns = [
         email_verification_views.ResendEmail.as_view(),
         name="resend_email_verification",
     ),
-    path("index/", registration_views.index, name="profile_update",)
 ]
