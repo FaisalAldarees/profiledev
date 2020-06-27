@@ -5,9 +5,9 @@ from django.utils import timezone
 from django.db import transaction
 
 from users.tasks import send_verification_email_task
-
-
 from users.models import UserEmailVerification
+
+from api.v1.serializers.recaptcha_serializers import ReCaptchaSerializer
 
 from datetime import timedelta
 
@@ -36,19 +36,28 @@ class VerifyEmail(generics.RetrieveAPIView):
             return Response({"verified": True}, status=status.HTTP_200_OK)
 
 
-class ResendEmail(generics.RetrieveAPIView):
+class ResendEmail(generics.UpdateAPIView):
     model = UserEmailVerification
     queryset = UserEmailVerification.objects.all()
+    serializer_class = ReCaptchaSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self):
         return UserEmailVerification.objects.get(user=self.request.user)
 
-    def retrieve(self, request, *args, **kwargs):
-        wait_time = timezone.now() - timedelta(seconds=30)
-        user_email_verification = self.get_object()
-        if user_email_verification.created_at < wait_time:
-            send_verification_email_task.delay(user_email_verification.user.email)
-            return Response({"resent": True}, status=status.HTTP_200_OK)
-        else:
-            return Response({"resent": False}, status=status.HTTP_400_BAD_REQUEST)
+    def update(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+
+            wait_time = timezone.now() - timedelta(seconds=30)
+            user_email_verification = self.get_object()
+
+            if user_email_verification.created_at < wait_time:
+                send_verification_email_task.delay(user_email_verification.user.email)
+                return Response({"resent": True}, status=status.HTTP_200_OK)
+
+            else:
+                return Response({"resent": False}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors)

@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+TEMPLATES_DIR = os.path.join(BASE_DIR,'templates')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -29,6 +29,9 @@ HOST = 'http://127.0.0.1:8000'
 
 ALLOWED_HOSTS = []
 
+# reCAPTCHA
+
+RECAPTCHA_SECRET_KEY = "6Lfpn6kZAAAAAOkbF-2qEO7TcS69KAczyiKfduuy"
 
 # Application definition
 
@@ -60,7 +63,7 @@ ROOT_URLCONF = 'profile_dev.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIR,],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

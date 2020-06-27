@@ -4,6 +4,8 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 
+import requests
+
 
 def send_verification_email(user_email):
     user_email_verification = get_user_model().objects.get(email=user_email).user_email_verification
@@ -26,3 +28,10 @@ def delete_unverified_users():
 
     for user in users:
         user.delete()
+
+
+def verifiy_recaptcha(token):
+    res = requests.post(
+        "https://www.google.com/recaptcha/api/siteverify", {"secret": settings.RECAPTCHA_SECRET_KEY, "response": token}
+    )
+    return res.json()["success"]
