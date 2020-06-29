@@ -60,4 +60,4 @@ class ResendEmail(generics.UpdateAPIView):
             else:
                 return Response({"resent": False}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

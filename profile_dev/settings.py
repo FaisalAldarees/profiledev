@@ -156,12 +156,12 @@ REST_FRAMEWORK = {
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'profiledotdev@gmail.com'
-EMAIL_HOST_PASSWORD = '123321415263Profile'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 # CELERY STUFF
-BROKER_URL = os.environ.get('BROKER_URL', 'redis://redis:6379/0')
-CELERY_RESULT_BACKEND = os.environ.get('RESULT_BACKEND', 'redis://redis:6379/0')
+BROKER_URL = os.environ.get('BROKER_URL')
+CELERY_RESULT_BACKEND = os.environ.get('RESULT_BACKEND')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

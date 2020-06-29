@@ -12,6 +12,12 @@ services:
      - DB_NAME=profile_dev
      - DB_USER=profile_dev
      - DB_PASS=profile_dev
+
+     - BROKER_URL=redis://redis:6379/0
+     - RESULT_BACKEND=redis://redis:6379/0
+
+     - EMAIL_HOST_USER=profiledotdev@gmail.com
+     - EMAIL_HOST_PASSWORD=123321415263Profile
    depends_on:
      - db
 
@@ -26,6 +32,12 @@ services:
      - DB_NAME=profile_dev
      - DB_USER=profile_dev
      - DB_PASS=profile_dev
+
+     - BROKER_URL=redis://redis:6379/0
+     - RESULT_BACKEND=redis://redis:6379/0
+
+     - EMAIL_HOST_USER=profiledotdev@gmail.com
+     - EMAIL_HOST_PASSWORD=123321415263Profile
    depends_on:
      - redis
 
@@ -40,6 +52,12 @@ services:
      - DB_NAME=profile_dev
      - DB_USER=profile_dev
      - DB_PASS=profile_dev
+
+     - BROKER_URL=redis://redis:6379/0
+     - RESULT_BACKEND=redis://redis:6379/0
+
+     - EMAIL_HOST_USER=profiledotdev@gmail.com
+     - EMAIL_HOST_PASSWORD=123321415263Profile
    depends_on:
      - redis
 
@@ -56,6 +74,12 @@ services:
      - DB_NAME=profile_dev
      - DB_USER=profile_dev
      - DB_PASS=profile_dev
+
+     - BROKER_URL=redis://redis:6379/0
+     - RESULT_BACKEND=redis://redis:6379/0
+
+     - EMAIL_HOST_USER=profiledotdev@gmail.com
+     - EMAIL_HOST_PASSWORD=123321415263Profile
    depends_on:
      - app_migrate
      - db

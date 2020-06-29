@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.conf import settings
+
 from api.v1.utils import verifiy_recaptcha
 
 from users.models import UserProfile, UserEmailVerification
@@ -25,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "password",
             "confirm_password",
-            "recaptcha"
+            "recaptcha",
         )
         extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
 

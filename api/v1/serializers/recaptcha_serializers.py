@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from api.v1.utils import verifiy_recaptcha
 
@@ -13,6 +14,6 @@ class ReCaptchaSerializer(serializers.Serializer):
         fields = ["recaptcha"]
 
     def validate_recaptcha(self, value):
-        if not verifiy_recaptcha(value):
+        if not settings.DEBUG and not verifiy_recaptcha(value):
             raise ValidationError(_("reCAPTCHA is incorrect"))
         return value
