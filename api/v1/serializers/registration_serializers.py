@@ -4,6 +4,7 @@ from rest_framework.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.conf import settings
 
 from api.v1.utils import verifiy_recaptcha
 
@@ -25,12 +26,12 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "password",
             "confirm_password",
-            "recaptcha"
+            "recaptcha",
         )
         extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
 
     def validate_recaptcha(self, value):
-        if not verifiy_recaptcha(value):
+        if not settings.DEBUG and not verifiy_recaptcha(value):
             raise ValidationError(_("reCAPTCHA is incorrect"))
 
         return value

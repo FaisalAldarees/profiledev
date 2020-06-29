@@ -25,9 +25,11 @@ class EmailVerificationTests(TestCase):
             "last_name": "Alice",
             "password": "123456",
             "confirm_password": "123456",
+            "recaptcha": "test"
         }
-
-        res = self.client.post(CREATE_USER_URL, payload)
+        with patch("api.v1.serializers.registration_serializers.verifiy_recaptcha") as vr:
+            vr.return_value = True
+            res = self.client.post(CREATE_USER_URL, payload)
 
         user = get_user_model().objects.get(email=payload["email"])
 
@@ -49,9 +51,11 @@ class EmailVerificationTests(TestCase):
             "last_name": "Alice",
             "password": "123456",
             "confirm_password": "123456",
+            "recaptcha": "test"
         }
-
-        res1 = self.client.post(CREATE_USER_URL, payload)
+        with patch("api.v1.serializers.registration_serializers.verifiy_recaptcha") as vr:
+            vr.return_value = True
+            res1 = self.client.post(CREATE_USER_URL, payload)
 
         user = get_user_model().objects.get(email=payload["email"])
         user.user_email_verification.created_at = timezone.now() + timezone.timedelta(minutes=31)
@@ -66,6 +70,7 @@ class EmailVerificationTests(TestCase):
         self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res2.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(user.is_email_verified)
+        self.assertFalse(res2.data["verified"])
         self.assertEqual(se.call_count, 1)
 
     @patch("api.v1.serializers.registration_serializers.send_verification_email_task.delay")
@@ -76,9 +81,11 @@ class EmailVerificationTests(TestCase):
             "last_name": "Alice",
             "password": "123456",
             "confirm_password": "123456",
+            "recaptcha": "test"
         }
-
-        res1 = self.client.post(CREATE_USER_URL, payload)
+        with patch("api.v1.serializers.registration_serializers.verifiy_recaptcha") as vr:
+            vr.return_value = True
+            res1 = self.client.post(CREATE_USER_URL, payload)
 
         user = get_user_model().objects.get(email=payload["email"])
 
@@ -107,19 +114,25 @@ class EmailVerificationTests(TestCase):
             "last_name": "Alice",
             "password": "123456",
             "confirm_password": "123456",
+            "recaptcha": "test"
         }
-
-        res1 = self.client.post(CREATE_USER_URL, payload)
+        with patch("api.v1.serializers.registration_serializers.verifiy_recaptcha") as vr:
+            vr.return_value = True
+            res1 = self.client.post(CREATE_USER_URL, payload)
 
         user = get_user_model().objects.get(email=payload["email"])
         user.user_email_verification.created_at = timezone.now() - timezone.timedelta(seconds=31)
         user.user_email_verification.save()
 
         self.client.force_authenticate(user)
-        res2 = self.client.get(RESEND_EMAIL_URL)
+
+        with patch("api.v1.serializers.recaptcha_serializers.verifiy_recaptcha") as vr:
+            vr.return_value = True
+            res2 = self.client.patch(RESEND_EMAIL_URL, {"recaptcha": "test"})
 
         self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res2.status_code, status.HTTP_200_OK)
+        self.assertTrue(res2.data["resent"])
         self.assertEqual(se.call_count, 2)
 
     @patch("api.v1.views.email_verification_views.send_verification_email_task.delay")
@@ -130,21 +143,27 @@ class EmailVerificationTests(TestCase):
             "last_name": "Alice",
             "password": "123456",
             "confirm_password": "123456",
+            "recaptcha": "test",
         }
-
-        res1 = self.client.post(CREATE_USER_URL, payload)
+        with patch("api.v1.serializers.registration_serializers.verifiy_recaptcha") as vr:
+            vr.return_value = True
+            res1 = self.client.post(CREATE_USER_URL, payload)
 
         user = get_user_model().objects.get(email=payload["email"])
         user.user_email_verification.created_at = timezone.now() - timezone.timedelta(seconds=31)
         user.user_email_verification.save()
 
         self.client.force_authenticate(user)
-        self.client.get(RESEND_EMAIL_URL)
+        self.client.patch(RESEND_EMAIL_URL)
 
         user.user_email_verification.created_at = timezone.now() - timezone.timedelta(seconds=29)
         user.user_email_verification.save()
 
-        res2 = self.client.get(RESEND_EMAIL_URL)
+        with patch("api.v1.serializers.recaptcha_serializers.verifiy_recaptcha") as vr:
+            vr.return_value = True
+            res2 = self.client.patch(RESEND_EMAIL_URL, {"recaptcha": "test"})
+
         self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res2.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(se.call_count, 2)
+        self.assertFalse(res2.data["resent"])
+        self.assertEqual(se.call_count, 1)
