@@ -1,6 +1,8 @@
 image: python:3.7.3
 
 pipelines:
+  option:
+    -docker: true
   default:
     - step:
         caches:
@@ -8,5 +10,6 @@ pipelines:
         script: 
           - pip install -r requirements.txt
           - pip install docker-compose
+          - pip install docker
           - docker-compose build
           - docker-compose run --rm app sh -c "python manage.py test && flake8"
