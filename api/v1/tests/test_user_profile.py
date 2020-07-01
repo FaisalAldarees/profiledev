@@ -76,6 +76,8 @@ class UserInfoTests(TestCase):
         res = self.client.patch(USER_INFO_URL, payload, format="json")
 
         exp_res = {
+            "first_name": "Bob",
+            "last_name": "Alice",
             "job_experiences": [
                 {
                     "company": "GeoTech",
@@ -321,6 +323,5 @@ class UserInfoTests(TestCase):
         }
         res1 = self.client.patch(USER_INFO_URL, payload, format="json")
         res2 = self.client.put(USER_INFO_URL, payload, format="json")
-
         self.assertEqual(res1.status_code, status.HTTP_200_OK)
         self.assertEqual(res2.status_code, status.HTTP_200_OK)

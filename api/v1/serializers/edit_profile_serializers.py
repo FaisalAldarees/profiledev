@@ -155,6 +155,8 @@ class SocialInfoSerializer(serializers.Serializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(source='user.first_name', read_only=True)
+    last_name = serializers.CharField(source='user.last_name', read_only=True)
     job_experiences = JobExperienceSerializer(many=True, required=False, allow_null=True)
     education = EducationSerializer(many=True, required=False, allow_null=True)
     certifications = CertificationSerializer(many=True, required=False, allow_null=True)
@@ -164,6 +166,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = [
+            "first_name",
+            "last_name",
             "job_experiences",
             "education",
             "certifications",
