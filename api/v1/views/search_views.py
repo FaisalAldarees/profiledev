@@ -19,7 +19,7 @@ class UserSearchList(generics.ListAPIView):
             super()
             .get_queryset()
             .annotate(search=SearchVector("user__first_name", "user__last_name"),)
-            .filter(search=self.request.query_params.get("keywords"))
+            .filter(search=self.request.query_params.get("query"))
         )
 
     def list(self, request, *args, **kwargs):

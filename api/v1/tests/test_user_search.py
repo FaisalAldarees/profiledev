@@ -41,7 +41,7 @@ class UserSearchTest(TestCase):
             self.client.post(CREATE_USER_URL, payload_1)
             self.client.post(CREATE_USER_URL, payload_2)
 
-        res = self.client.get(SEARCH_URL, {"keywords": "Bob Alice"})
+        res = self.client.get(SEARCH_URL, {"query": "Bob Alice"})
 
         user_1 = get_user_model().objects.get(email=payload_1["email"])
         user_2 = get_user_model().objects.get(email=payload_2["email"])
@@ -89,6 +89,6 @@ class UserSearchTest(TestCase):
             vr.return_value = True
             self.client.post(CREATE_USER_URL, payload)
 
-        res = self.client.get(SEARCH_URL, {"keywords": "AmIThere???"})
+        res = self.client.get(SEARCH_URL, {"query": "AmIThere???"})
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
