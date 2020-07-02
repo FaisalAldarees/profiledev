@@ -8,8 +8,10 @@ from django.conf import settings
 
 from api.v1.utils import verifiy_recaptcha
 
-from users.models import UserProfile, UserEmailVerification
+from users.models import UserEmailVerification
 from users.tasks import send_verification_email_task
+
+from user_profile.models import UserProfile
 
 import uuid
 

@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from users.models import UserProfile, UserEmailVerification
+from users.models import UserEmailVerification
+from user_profile.models import UserProfile
 from api.v1.utils import send_verification_email, delete_unverified_users
 
 from rest_framework.test import APIClient

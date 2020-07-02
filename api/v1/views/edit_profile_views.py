@@ -4,7 +4,7 @@ from api.v1.serializers.edit_profile_serializers import (
     UserAvatarSerializer,
     UserProfileSerializer,
 )
-from users.models import UserProfile
+from user_profile.models import UserProfile
 
 
 class AvatarUpdate(generics.UpdateAPIView):
