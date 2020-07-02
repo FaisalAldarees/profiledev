@@ -5,7 +5,7 @@ from django.contrib.postgres.search import SearchVector
 
 from api.v1.serializers.edit_profile_serializers import UserProfileSerializer
 
-from users.models import UserProfile
+from user_profile.models import UserProfile
 
 
 class UserSearchList(generics.ListAPIView):

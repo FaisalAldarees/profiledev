@@ -2,8 +2,8 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from users import models
-from users.models import UserProfile
+from user_profile import models
+from user_profile.models import UserProfile
 
 import tempfile
 import os
