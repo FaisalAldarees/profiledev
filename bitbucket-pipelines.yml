@@ -1,0 +1,14 @@
+image: python:3.7.3
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - pip
+        services:
+          - docker
+
+        script:
+          - pip install docker-compose
+          - docker-compose build
+          - docker-compose run --rm app sh -c "python manage.py test && flake8"
