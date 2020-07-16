@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-beat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: celery-beat
+  template:
+    metadata:
+      labels:
+        component: celery-beat
+    spec:
+      containers:
+        - name: celery-beat
+          image: faisalaldarees/backend
+          command: ["celery", "-A", "profile_dev", "worker", "-l", "info"]
+          env:
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service
+            - name: REDIS_PORT
+              value: '6379'
+            - name: DB_USER
+              value: profile_dev
+            - name: DB_PASS
+              value: profile_dev
+            - name: DB_HOST
+              value: postgres-cluster-ip-service
+            - name: DB_PORT
+              value: '5432'
+            - name: PGDATABASE
+              value: profile_dev
+            - name: BROKER_URL
+              value: redis://redis-cluster-ip-service:6379/0
+            - name: RESULT_BACKEND
+              value: redis://redis-cluster-ip-service:6379/0
+            - name: EMAIL_HOST_USER
+              value: profiledotdev@gmail.com
+            - name: EMAIL_HOST_PASSWORD
+              value: 123321415263Profile
