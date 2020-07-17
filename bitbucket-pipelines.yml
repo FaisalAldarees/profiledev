@@ -1,5 +1,6 @@
 image: python:3.7.3
-
+options:
+  docker: true
 pipelines:
   default:
     - step:
@@ -9,17 +10,5 @@ pipelines:
         services:
           - docker
         script:
-          - pipe: atlassian/kubectl-run:1.1.2
-            variables:
-              KUBE_CONFIG: $KUBE_CONFIG
-              KUBECTL_COMMAND: 'apply'
-              RESOURCE_PATH: 'k8s'
-          - pip install -r requirements.txt
-          - "python manage.py test && flake8"  
-    - step:
-        name: Deploy
-        script:
-          - pipe: atlassian/google-app-engine-deploy:0.2.1
-            variables:
-              KEY_FILE: $KEY_FILE
-              PROJECT: 'profiledev'
+          - docker build -t backend:$BITBUCKET_COMMIT
+            
