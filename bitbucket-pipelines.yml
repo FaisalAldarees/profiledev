@@ -17,7 +17,9 @@ pipelines:
           - gcloud config set compute/zone us-central1-c
           - gcloud container clusters get-credentials multi-cluster 
           - docker login -u _json_key -p "$GCR_KEY" https://gcr.io
-          - ls
+          - docker pull gcr.io/profiledev/backend:latest
+          - docker build -t profile.dev/backend-test .
+          - python manage.py test && flake8
 
 
 
