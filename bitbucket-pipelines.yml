@@ -9,6 +9,6 @@ pipelines:
         services:
           - docker
         script:
-          - sudo apt-get install kubectl
-          - gcloud auth activate-service-account --key-file $DEPLOY_KEY
+          - curl  https://sdk.cloud.google.com | bash > /dev/null;
+          - ls
             
