@@ -15,6 +15,7 @@ pipelines:
           - gcloud auth activate-service-account --key-file deploy_key.json
           - gcloud config set project profiledev
           - gcloud config set compute/zone us-central1-c
+          - gcloud services enable container.googleapis.com
           - gcloud container clusters get-credentials multi-cluster 
           - docker login -u _json_key -p "$GCR_KEY" https://gcr.io
           - docker pull profiledev/backend:latest
