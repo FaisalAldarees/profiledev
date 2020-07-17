@@ -8,12 +8,7 @@ pipelines:
         services:
           - docker
         script:
-          - curl  https://sdk.cloud.google.com
-          - ls
-          - cd ..
-          - pwd
-          - ls
-          - cd ..
-          - pwd
-          - ls
+          - curl  https://sdk.cloud.google.com | bash > /dev/null;
+          - witch gcloud
+
             
