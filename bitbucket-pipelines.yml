@@ -11,8 +11,8 @@ pipelines:
           - curl  https://sdk.cloud.google.com | bash > /dev/null;
           - source ~/google-cloud-sdk/path.bash.inc
           - gcloud components update kubectl
-          - echo $DEPLOY_KEY > deploy_key.json
-          - gcloud auth activate-service-account --key-file deploy_key.json
+          - echo $OWNER_KEY > owner_key.json
+          - gcloud auth activate-service-account --key-file owner_key.json
           - gcloud config set project profiledev
           - gcloud config set compute/zone us-central1-c
           - gcloud container clusters get-credentials multi-cluster 
