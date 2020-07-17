@@ -19,8 +19,9 @@ pipelines:
           - docker login -u _json_key -p "$GCR_KEY" https://gcr.io
           - docker pull gcr.io/profiledev/backend:latest
           - docker build -t profile.dev/backend-test .
-          - docker run profile.dev/backend-test python manage.py test && flake8 -- --coverage
-
+          - ls
+          - which kubectl
+          - kubectl apply -f k8s
 
 
             
