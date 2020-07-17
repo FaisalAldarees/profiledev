@@ -3,19 +3,23 @@ image: python:3.7.3
 pipelines:
   default:
     - step:
-        name: Test
-        image:
-          name: gcr.io/profiledev/backend:latest
-          username: _json_key
-          password: '$GCR_JSON_KEY'
+        name: Build and Test
         caches:
           - pip
         services:
           - docker
         script:
-          - pipe: atlassian/kubectl-run:1.1.8
+          - pipe: atlassian/kubectl-run:1.1.2
             variables:
               KUBE_CONFIG: $KUBE_CONFIG
               KUBECTL_COMMAND: 'apply'
               RESOURCE_PATH: 'k8s'
-          - "python manage.py test && flake8"
+          - pip install -r requirements.txt
+          - "python manage.py test && flake8"  
+    - step:
+        name: Deploy
+        script:
+          - pipe: atlassian/google-app-engine-deploy:0.2.1
+            variables:
+              KEY_FILE: $KEY_FILE
+              PROJECT: 'profiledev'
