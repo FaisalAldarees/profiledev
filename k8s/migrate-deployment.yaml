@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: migrate
-          image: faisalaldarees/backend
+          image: gcr.io/profiledev/backend
           command: ["python", "manage.py", "migrate"]
           env:
             - name: REDIS_HOST

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: faisalaldarees/backend
+          image: gcr.io/profiledev/backend
           command: ["gunicorn", "--workers", "1", "--bind", ":8000", "--log-level", "INFO", "profile_dev.wsgi:application"]
           env:
             - name: REDIS_HOST

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: celery-beat
-          image: faisalaldarees/backend
+          image: gcr.io/profiledev/backend
           command: ["celery", "-A", "profile_dev", "worker", "-l", "info"]
           env:
             - name: REDIS_HOST
