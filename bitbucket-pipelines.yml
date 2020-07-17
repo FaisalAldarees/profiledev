@@ -17,7 +17,7 @@ pipelines:
           - gcloud config set compute/zone us-central1-c
           - gcloud container clusters get-credentials multi-cluster 
           - docker login -u _json_key -p "$GCR_KEY" https://gcr.io
-          - kubectl apply k8s 
+          - ls
 
 
 
