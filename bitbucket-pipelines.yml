@@ -10,5 +10,5 @@ pipelines:
         services:
           - docker
         script:
-          - docker build -t backend:$BITBUCKET_COMMIT
+          - docker build -t backend:$BITBUCKET_COMMIT .
             
