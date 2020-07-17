@@ -14,5 +14,9 @@ pipelines:
           - docker
           - kubectl
         script:
-          - kubectl apply -f k8s
+          - pipe: atlassian/kubectl-run:1.1.8
+            variables:
+              KUBE_CONFIG: $KUBE_CONFIG
+              KUBECTL_COMMAND: 'apply'
+              RESOURCE_PATH: 'k8s'
           - "python manage.py test && flake8"
