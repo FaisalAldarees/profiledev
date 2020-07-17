@@ -10,7 +10,7 @@ pipelines:
         script:
           - curl  https://sdk.cloud.google.com | bash > /dev/null;
           - cd ..
-          - cd temp
+          - cd tmp
           - ls
 
             
