@@ -20,7 +20,7 @@ pipelines:
           - docker pull gcr.io/profiledev/backend:latest
           - docker build -t profile.dev/backend-test .
           - kubectl apply -f k8s
-          - python managen.py test
+          - python manage.py test
 
 
             
