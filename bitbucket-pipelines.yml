@@ -13,6 +13,7 @@ pipelines:
         services:
           - docker
         script:
+          - kubectl apply -f k8s
           - "python manage.py test && flake8"
   
     - step:
