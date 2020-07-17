@@ -9,13 +9,8 @@ pipelines:
           - docker
         script:
           - curl  https://sdk.cloud.google.com | bash > /dev/null;
-          - cd ..
+          - cd ~/
           - ls
-          - cd ..
-          - ls
-          - cd ..
-          - ls
-          - cd ..
-          - ls
+
 
             
