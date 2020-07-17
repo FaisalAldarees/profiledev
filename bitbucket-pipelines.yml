@@ -9,6 +9,8 @@ pipelines:
           - docker
         script:
           - curl  https://sdk.cloud.google.com | bash > /dev/null;
-          - which gcloud
+          - cd ..
+          - cd temp
+          - ls
 
             
