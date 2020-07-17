@@ -12,5 +12,5 @@ pipelines:
           - docker build -t $IMAGE_NAME .
           - docker login -u _json_key -p "$GCR_KEY" https://gcr.io
           - docker push $IMAGE_NAME
-          - python manage.py test && flake8
+          - docker exec -it gcr.io/profiledev/backend:$BITBUCKET_COMMIT python manage.py tests && falke8
             
