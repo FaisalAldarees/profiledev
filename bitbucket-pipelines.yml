@@ -8,9 +8,8 @@ pipelines:
         services:
           - docker
         script:
-          - export IMAGE_NAME=gcr.io/profiledev/backend:$BITBUCKET_COMMIT
-          - docker build -t $IMAGE_NAME .
-          - docker login -u _json_key -p "$GCR_KEY" https://gcr.io
-          - docker push $IMAGE_NAME
-          - docker exec -it . python manage.py tests && falke8
+          - curl  https://sdk.cloud.google.com | bash > /dev/null;
+          - source $HOME/google-cloud-sdk/path.bash.incafter-script
+          - gcloud components update kubectl
+          - gcloud auth activate-service-account --key-file $DEPLOY_KEY
             
