@@ -3,9 +3,16 @@ image: python:3.7.3
 pipelines:
   default:
     - step:
-        name: Deploy
+        name: Test
+        image:
+          name: gcr.io/profiledev/backend:latest
+          username: _json_key
+          password: '$GCR_JSON_KEY'
+        caches:
+          - pip
+        services:
+          - docker
+          - kubectl
         script:
-          - pipe: atlassian/google-app-engine-deploy:0.2.1
-            variables:
-              KEY_FILE: $KEY_FILE
-              PROJECT: 'profiledev'
+          - kubectl apply -f k8s
+          - "python manage.py test && flake8"
