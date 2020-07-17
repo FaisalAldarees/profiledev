@@ -10,5 +10,8 @@ pipelines:
         services:
           - docker
         script:
-          - docker build -t backend:$BITBUCKET_COMMIT .
+          - export IMAGE_NAME=gcr.io/profiledev/backend:$BITBUCKET_COMMIT
+          - docker build -t $IMAGE_NAME .
+          - docker login -u _json_key -p "$GCR_KEY" https://gcr.io
+          - docker push $IMAGE_NAME
             
