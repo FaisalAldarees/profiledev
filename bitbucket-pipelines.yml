@@ -11,6 +11,7 @@ pipelines:
           - curl  https://sdk.cloud.google.com | bash > /dev/null;
           - source ~/google-cloud-sdk/path.bash.inc
           - gcloud components update kubectl
+          - gcloud auth activate-service-account --key-file $DEPLOY_KEY
 
 
 
