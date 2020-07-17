@@ -9,8 +9,9 @@ pipelines:
           - docker
         script:
           - curl  https://sdk.cloud.google.com | bash > /dev/null;
-          - cd ~/
-          - ls
+          - source ~/google-cloud-sdk/path.bash.inc
+          - gcloud components update kubectl
+
 
 
             
