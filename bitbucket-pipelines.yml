@@ -19,8 +19,11 @@ pipelines:
           - docker login -u _json_key -p "$GCR_KEY" https://gcr.io
           - docker pull gcr.io/profiledev/backend:latest
           - docker build -t profile.dev/backend-test .
+          - pip install -r requirements.txt
           - kubectl apply -f k8s
           - kubectl get pods
+          - kubectl get services
+          - python manage.py test
 
 
             
