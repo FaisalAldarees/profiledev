@@ -5,11 +5,10 @@ pipelines:
   default:
     - step:
         name: Deploy
-        image: google/cloud-sdk:latest
         services:
           - docker
         script:
-          - curl  https://sdk.cloud.google.com | bash > /dev/null;
+          - curl  https://sdk.cloud.google.com
           - ls
           - cd ..
           - pwd
