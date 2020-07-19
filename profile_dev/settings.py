@@ -142,6 +142,10 @@ AUTH_USER_MODEL = 'users.User'
 # RESTFramework
 
 REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
@@ -149,7 +153,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
         'profile_dev.permissions.IsEmailVerified',
-    ]
+    ],
 }
 
 # Email
