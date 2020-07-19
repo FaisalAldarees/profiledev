@@ -27,10 +27,13 @@ spec:
               subPath: postgres
           env:
             - name: POSTGRES_DB
-              value: profile_dev
+              value: {{ .Values.db_name }} 
             - name: POSTGRES_USER
-              value: profile_dev
+              value: {{ .Values.db_user }}
             - name: POSTGRES_PASSWORD
-              value: profile_dev
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password
+                  key: {{ .Values.postgres_password_key }}
             - name: POSTGRES_PORT 
               value: '5432'

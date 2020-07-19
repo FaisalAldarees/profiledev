@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: backend
+  template:
+    metadata:
+      labels:
+        component: backend
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.backend_image }}
+          command: ["gunicorn", "--workers", "1", "--bind", ":8000", "--log-level", "INFO", "profile_dev.wsgi:application"]
+          env:
+            - name: REDIS_HOST
+              value: {{ .Values.redis_host }}
+            - name: REDIS_PORT
+              value: {{ .Values.redis_port | quote}}
+            - name: DB_USER
+              value: {{ .Values.db_user }}
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: db-pass 
+                  key: {{ .Values.db_pass_key }} 
+            - name: DB_HOST
+              value: {{ .Values.db_host }} 
+            - name: DB_PORT
+              value: {{ .Values.db_port | quote}} 
+            - name: DB_NAME
+              value: {{ .Values.db_name }} 
+            - name: BROKER_URL
+              value: {{ .Values.broker_url }} 
+            - name: RESULT_BACKEND
+              value: {{ .Values.result_backend }}
+            - name: EMAIL_HOST_USER
+              value: {{ .Values.email_host_user }}
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: email-host-password
+                  key: {{ .Values.email_host_password_key }}
+          ports:
+            - containerPort: 8000
