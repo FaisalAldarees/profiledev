@@ -50,7 +50,7 @@ spec:
                 secretKeyRef:
                   name: "{{ .Release.Name }}-secrets"
                   key: email_host_password
-            - name: NOT_PIPELINJE
+            - name: NOT_PIPELINE
               value: "'true'"
           ports:
             - containerPort: 8000
