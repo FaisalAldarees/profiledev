@@ -171,8 +171,12 @@ CELERY_TIMEZONE = 'UTC'
 # storage
 STATIC_URL = '/static/'
 
-DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-GS_BUCKET_NAME = 'pd-media'
-GS_DEFAULT_ACL = 'publicRead'
+if os.environ.get('NOT_PIPELINE'):
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_BUCKET_NAME = 'pd-media'
+    GS_DEFAULT_ACL = 'publicRead'
 
-MEDIA_URL = 'https://storage.googleapis.com/{}/media/'.format(GS_BUCKET_NAME)
+    MEDIA_URL = 'https://storage.googleapis.com/{}/media/'.format(GS_BUCKET_NAME)
+else:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
