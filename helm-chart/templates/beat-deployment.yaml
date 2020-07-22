@@ -1,7 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: beat-deployment
+  name: "{{ .Release.Name }}-beat-deployment"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
   replicas: 1
   selector:
@@ -9,7 +14,11 @@ spec:
       component: beat
   template:
     metadata:
+      name: "{{ .Release.Name }}-beat-deployment"
       labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         component: beat
     spec:
       containers:
@@ -17,17 +26,13 @@ spec:
           image: {{ .Values.backend_image }}
           command: ["celery", "-A", "profile_dev", "worker", "-l", "info"]
           env:
-            - name: REDIS_HOST
-              value: {{ .Values.redis_host }}
-            - name: REDIS_PORT
-              value: {{ .Values.redis_port | quote}}
             - name: DB_USER
               value: {{ .Values.db_user }}
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: db-pass 
-                  key: {{ .Values.db_pass_key }} 
+                  name: "{{ .Release.Name }}-secrets"
+                  key: db_password
             - name: DB_HOST
               value: {{ .Values.db_host }} 
             - name: DB_PORT
@@ -35,13 +40,13 @@ spec:
             - name: DB_NAME
               value: {{ .Values.db_name }} 
             - name: BROKER_URL
-              value: {{ .Values.broker_url }} 
+              value: "redis://{{ .Release.Name }}-redis-cluster-ip-service:6379/0"
             - name: RESULT_BACKEND
-              value: {{ .Values.result_backend }}
+              value: "redis://{{ .Release.Name }}-redis-cluster-ip-service:6379/0"
             - name: EMAIL_HOST_USER
               value: {{ .Values.email_host_user }}
             - name: EMAIL_HOST_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: email-host-password
-                  key: {{ .Values.email_host_password_key }}
+                  name: "{{ .Release.Name }}-secrets"
+                  key: email_host_password

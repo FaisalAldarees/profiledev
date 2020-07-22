@@ -24,6 +24,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.helm-chart/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -81,6 +82,7 @@ libs/
 .DS_Store
 .swp
 celerybeat-schedule.db
+celerybeat-schedule
 celerybeat.pid
 django_hydra
 

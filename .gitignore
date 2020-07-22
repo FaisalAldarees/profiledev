@@ -81,6 +81,7 @@ libs/
 .DS_Store
 .swp
 celerybeat-schedule.db
+celerybeat-schedule
 celerybeat.pid
 django_hydra
 

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Release.Name }}-worker-deployment"
+  name: "{{ .Release.Name }}-api-deployment"
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -11,20 +11,20 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      component: worker
+      component: api
   template:
     metadata:
-      name: "{{ .Release.Name }}-worker-deployment"
+      name: "{{ .Release.Name }}-api-deployment"
       labels:
         app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
         app.kubernetes.io/instance: {{ .Release.Name | quote }}
         helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-        component: worker
+        component: api
     spec:
       containers:
-        - name: worker
+        - name: api
           image: {{ .Values.backend_image }}
-          command: ["celery", "-A", "profile_dev", "worker", "-l", "info"]
+          command: ["gunicorn", "--bind", ":8000", "--log-level", "INFO", "profile_dev.wsgi:application"]
           env:
             - name: DB_USER
               value: {{ .Values.db_user }}
@@ -40,7 +40,7 @@ spec:
             - name: DB_NAME
               value: {{ .Values.db_name }} 
             - name: BROKER_URL
-              value: "redis://{{ .Release.Name }}-redis-cluster-ip-service:6379/0" 
+              value: "redis://{{ .Release.Name }}-redis-cluster-ip-service:6379/0"
             - name: RESULT_BACKEND
               value: "redis://{{ .Release.Name }}-redis-cluster-ip-service:6379/0"
             - name: EMAIL_HOST_USER
@@ -50,3 +50,5 @@ spec:
                 secretKeyRef:
                   name: "{{ .Release.Name }}-secrets"
                   key: email_host_password
+          ports:
+            - containerPort: 8000

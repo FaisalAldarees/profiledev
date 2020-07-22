@@ -7,11 +7,11 @@ services:
    command:
      ["python", "manage.py", "migrate"]
    environment:
-     - DB_HOST=db
+     - DB_HOST=35.226.39.177
      - DB_PORT=5432
-     - DB_NAME=profile_dev
+     - DB_NAME=profiledev
      - DB_USER=profile_dev
-     - DB_PASS=profile_dev
+     - DB_PASS=1233212123415263
 
      - BROKER_URL=redis://redis:6379/0
      - RESULT_BACKEND=redis://redis:6379/0

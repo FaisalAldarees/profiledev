@@ -1,0 +1,17 @@
+backend_image: "gcr.io/profiledev/backend:latest"
+
+pullPolicy: "Always"
+
+redis_host: "{{ .Release.Name }}-redis-cluster-ip"
+redis_port: 5565
+
+db_user: "profiledev"
+db_password: "1233212123415263"
+db_host: "104.197.188.173"
+db_port: 5432
+db_name: "profiledev"
+
+email_host_user: "profiledotdev@gmail.com"
+email_host_password: "123321415263Profile"
+
+storage: "2Gi"

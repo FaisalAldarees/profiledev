@@ -1,52 +1,41 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: "{{ .Release.Name }}-worker-deployment"
+  name: "{{ .Release.Name }}-migration-hook"
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "1"
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      component: worker
   template:
     metadata:
-      name: "{{ .Release.Name }}-worker-deployment"
+      name: "{{ .Release.Name }}-migration-job"
       labels:
         app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
         app.kubernetes.io/instance: {{ .Release.Name | quote }}
         helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-        component: worker
     spec:
+      restartPolicy: Never
       containers:
-        - name: worker
+        - name: migrate
           image: {{ .Values.backend_image }}
-          command: ["celery", "-A", "profile_dev", "worker", "-l", "info"]
+          command: ["python", "manage.py", "migrate"]
           env:
             - name: DB_USER
               value: {{ .Values.db_user }}
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: "{{ .Release.Name }}-secrets"
-                  key: db_password
+                  name: "{{ .Release.Name }}-secrets" 
+                  key: db_password 
             - name: DB_HOST
               value: {{ .Values.db_host }} 
             - name: DB_PORT
               value: {{ .Values.db_port | quote}} 
             - name: DB_NAME
               value: {{ .Values.db_name }} 
-            - name: BROKER_URL
-              value: "redis://{{ .Release.Name }}-redis-cluster-ip-service:6379/0" 
-            - name: RESULT_BACKEND
-              value: "redis://{{ .Release.Name }}-redis-cluster-ip-service:6379/0"
-            - name: EMAIL_HOST_USER
-              value: {{ .Values.email_host_user }}
-            - name: EMAIL_HOST_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ .Release.Name }}-secrets"
-                  key: email_host_password
+            
