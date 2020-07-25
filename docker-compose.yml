@@ -84,6 +84,7 @@ services:
 
      - EMAIL_HOST_USER=profiledotdev@gmail.com
      - EMAIL_HOST_PASSWORD=123321415263Profile
+     - DEBUG=1
    depends_on:
      - app_migrate
      - db
