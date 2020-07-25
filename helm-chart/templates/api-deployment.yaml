@@ -27,30 +27,45 @@ spec:
           command: ["gunicorn", "--bind", ":8000", "--log-level", "INFO", "profile_dev.wsgi:application"]
           env:
             - name: DB_USER
-              value: {{ .Values.db_user }}
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: db_user
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
                   name: "{{ .Release.Name }}-secrets"
                   key: db_password
             - name: DB_HOST
-              value: {{ .Values.db_host }} 
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: db_host
             - name: DB_PORT
-              value: {{ .Values.db_port | quote}} 
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: db_port 
             - name: DB_NAME
-              value: {{ .Values.db_name }} 
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: db_name
             - name: BROKER_URL
-              value: "redis://{{ .Release.Name }}-redis-cluster-ip-service:6379/0"
+              value: "redis://{{ .Release.Name }}-redis-cluster-ip-service:6379/0" 
             - name: RESULT_BACKEND
               value: "redis://{{ .Release.Name }}-redis-cluster-ip-service:6379/0"
             - name: EMAIL_HOST_USER
-              value: {{ .Values.email_host_user }}
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: email_host
             - name: EMAIL_HOST_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: "{{ .Release.Name }}-secrets"
                   key: email_host_password
-            - name: NOT_PIPELINE
+            - name: DEBUG
               value: "'true'"
           ports:
             - containerPort: 8000

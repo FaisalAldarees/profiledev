@@ -23,7 +23,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR,'templates')
 SECRET_KEY = '9_v39w#t6=djx@l@umi*i#54apd=r=)d-rclu+dleyj2h(bd*^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
 HOST = 'http://127.0.0.1:8000'
 
@@ -171,7 +171,7 @@ CELERY_TIMEZONE = 'UTC'
 # storage
 STATIC_URL = '/static/'
 
-if os.environ.get('NOT_PIPELINE'):
+if DEBUG:
     DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
     GS_BUCKET_NAME = 'pd-media'
     GS_DEFAULT_ACL = 'publicRead'
