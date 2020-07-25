@@ -171,7 +171,7 @@ CELERY_TIMEZONE = 'UTC'
 # storage
 STATIC_URL = '/static/'
 
-if DEBUG:
+if not DEBUG:
     DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
     GS_BUCKET_NAME = 'pd-media'
     GS_DEFAULT_ACL = 'publicRead'
