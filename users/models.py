@@ -26,6 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    password_token = models.CharField(max_length=128, null=True)
     is_active = models.BooleanField(default=True)
     is_email_verified = models.BooleanField(default=False)
     objects = UserManager()

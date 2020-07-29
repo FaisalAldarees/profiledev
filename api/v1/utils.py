@@ -23,6 +23,19 @@ def send_verification_email(user_email):
     return user_email
 
 
+def send_change_password(user_email):
+    user = get_user_model().objects.get(email=user_email)
+
+    email = EmailMessage(
+        _("Password Change"),
+        "{0} {1}/v1/users/password/change/{2}".format(
+            _("Click to change your password"), settings.HOST, user.password_token
+        ),
+        to=[user_email],
+    )
+    email.send()
+
+
 def delete_unverified_users():
     users = get_user_model().objects.filter(is_email_verified=False)
 

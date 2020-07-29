@@ -49,7 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         with transaction.atomic():
-            user = get_user_model().objects.create_user(**validated_data)
+            user = get_user_model().objects.create_user(**validated_data, password_token=uuid.uuid4())
             UserEmailVerification.objects.create(user=user, email_token=uuid.uuid4())
             UserProfile.objects.create(user=user)
             send_verification_email_task.delay(user.email)
