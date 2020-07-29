@@ -15,7 +15,7 @@ def avatar_image_file_path(instance, filename):
 
 class UserProfile(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="profile",)
-    avatar = models.ImageField(default="media/uploads/avatar/download.jpeg", upload_to=avatar_image_file_path,)
+    avatar = models.ImageField(default="media/uploads/avatar/default.jpeg", upload_to=avatar_image_file_path,)
     job_experiences = ArrayField(JSONField(default=None, blank=True), default=None, blank=True, null=True,)
     education = ArrayField(JSONField(default=None, blank=True), default=None, blank=True, null=True,)
     certifications = ArrayField(JSONField(default=None, blank=True), default=None, blank=True, null=True,)

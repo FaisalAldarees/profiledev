@@ -1,0 +1,5 @@
+backend_image: "gcr.io/profiledev/backend:latest"
+
+db_password: "1233212123415263"
+
+email_host_password: "123321415263Profile"

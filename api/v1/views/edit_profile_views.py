@@ -27,7 +27,7 @@ class AvatarRetrieve(generics.RetrieveAPIView):
         if not self.get_object().user.is_email_verified:
             raise exceptions.NotFound()
         else:
-            return super().retrieve()
+            return super().retrieve(self.request)
 
 
 class UserProfileUpdate(generics.UpdateAPIView):

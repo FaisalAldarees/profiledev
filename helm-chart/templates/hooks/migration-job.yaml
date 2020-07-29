@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-migration-hook"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "2"
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}-migration-job"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: {{ .Values.backend_image }}
+          command: ["python", "manage.py", "migrate"]
+          env:
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: db_user
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Release.Name }}-secrets"
+                  key: db_password
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: db_host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: db_port 
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: db_name
+            

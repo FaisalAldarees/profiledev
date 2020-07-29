@@ -4,14 +4,16 @@ services:
  app_migrate:
    build:
      context: .
+   volumes:
+     - .:/app
    command:
      ["python", "manage.py", "migrate"]
    environment:
-     - DB_HOST=db
+     - DB_HOST=35.226.39.177
      - DB_PORT=5432
-     - DB_NAME=profile_dev
+     - DB_NAME=profiledev
      - DB_USER=profile_dev
-     - DB_PASS=profile_dev
+     - DB_PASS=1233212123415263
 
      - BROKER_URL=redis://redis:6379/0
      - RESULT_BACKEND=redis://redis:6379/0
@@ -66,6 +68,8 @@ services:
      context: .
    ports:
      - "8000:8000"
+   volumes:
+     - .:/app
    command:
      ["python", "manage.py", "runserver", "0.0.0.0:8000"]
    environment:
@@ -80,6 +84,7 @@ services:
 
      - EMAIL_HOST_USER=profiledotdev@gmail.com
      - EMAIL_HOST_PASSWORD=123321415263Profile
+     - DEBUG=1
    depends_on:
      - app_migrate
      - db
