@@ -18,7 +18,6 @@ class SendChangePasswordLink(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            print(serializer.data.get("email"))
             user = get_user_model().objects.get(email=serializer.data.get("email"))
             send_change_password_task.delay(user.email)
 
