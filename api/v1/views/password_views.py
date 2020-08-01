@@ -2,6 +2,7 @@ from rest_framework import permissions, generics, status
 from rest_framework.response import Response
 
 from django.contrib.auth import get_user_model
+from django.db import transaction
 
 from users.tasks import send_change_password_task
 
@@ -39,9 +40,10 @@ class ChangePassword(generics.UpdateAPIView):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            user.password_token = uuid.uuid4()
-            user.set_password(serializer.data.get("password"))
-            user.save()
+            with transaction.atomic():
+                user.password_token = uuid.uuid4()
+                user.set_password(serializer.data.get("password"))
+                user.save()
 
             return Response({"success": "Password changed"}, status=status.HTTP_200_OK)
 
