@@ -8,7 +8,7 @@ from django.conf import settings
 
 from api.v1.utils import verifiy_recaptcha
 
-from users.models import UserEmailVerification
+from users.models import UserEmailVerification, UserChangePassword
 from users.tasks import send_verification_email_task
 
 from user_profile.models import UserProfile
@@ -49,8 +49,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         with transaction.atomic():
-            user = get_user_model().objects.create_user(**validated_data, password_token=uuid.uuid4())
+            user = get_user_model().objects.create_user(**validated_data)
             UserEmailVerification.objects.create(user=user, email_token=uuid.uuid4())
+            UserChangePassword.objects.create(user=user, password_token=uuid.uuid4())
             UserProfile.objects.create(user=user)
             send_verification_email_task.delay(user.email)
 

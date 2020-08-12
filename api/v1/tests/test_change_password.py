@@ -1,9 +1,12 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils import timezone
 
 from rest_framework.test import APIClient
 from rest_framework import status
+
+from users.models import UserChangePassword
 
 from unittest.mock import patch
 
@@ -27,18 +30,18 @@ class PasswordTests(TestCase):
             "first_name": "Bob",
             "last_name": "Alice",
             "password": "123456",
-            "password_token": "test_password_token",
         }
 
         user = create_user(**payload)
-
+        user_change_password = UserChangePassword.objects.create(user=user, password_token="test_password_token")
+        user_change_password.created_at = timezone.now() - timezone.timedelta(seconds=31)
+        user_change_password.save()
         with patch("api.v1.serializers.password_serializer.verifiy_recaptcha") as vr:
             vr.return_value = True
             res = self.client.patch(SEND_CHANGE_PASSWORD_URL, {"email": user.email, "recaptcha": "asdasd"})
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(scp.call_count, 1)
-        self.assertIn("success", res.data)
+        self.assertTrue("sent", res.data)
 
         res = self.client.patch(
             "/v1/users/password/change/test_password_token/",
@@ -46,7 +49,7 @@ class PasswordTests(TestCase):
         )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertIn("success", res.data)
+        self.assertTrue("changed", res.data)
 
         res = self.client.post(LOGIN_URL, {"email": user.email, "password": "new_password"})
 
@@ -59,18 +62,19 @@ class PasswordTests(TestCase):
             "first_name": "Bob",
             "last_name": "Alice",
             "password": "123456",
-            "password_token": "test_password_token",
         }
 
         user = create_user(**payload)
-
+        user_change_password = UserChangePassword.objects.create(user=user, password_token="test_password_token")
+        user_change_password.created_at = timezone.now() - timezone.timedelta(seconds=31)
+        user_change_password.save()
         with patch("api.v1.serializers.password_serializer.verifiy_recaptcha") as vr:
             vr.return_value = True
             res = self.client.patch(SEND_CHANGE_PASSWORD_URL, {"email": user.email, "recaptcha": "asdasd"})
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(scp.call_count, 1)
-        self.assertIn("success", res.data)
+        self.assertTrue("sent", res.data)
 
         res = self.client.patch(
             "/v1/users/password/change/test_password_token/",
@@ -78,7 +82,7 @@ class PasswordTests(TestCase):
         )
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertNotIn("success", res.data)
+        self.assertNotIn("changed", res.data)
 
         res = self.client.post(LOGIN_URL, {"email": user.email, "password": "new_password_0"})
 
@@ -91,10 +95,12 @@ class PasswordTests(TestCase):
             "first_name": "Bob",
             "last_name": "Alice",
             "password": "123456",
-            "password_token": "test_password_token",
         }
 
         user = create_user(**payload)
+        user_change_password = UserChangePassword.objects.create(user=user, password_token="test_password_token")
+        user_change_password.created_at = timezone.now() - timezone.timedelta(seconds=31)
+        user_change_password.save()
 
         with patch("api.v1.serializers.password_serializer.verifiy_recaptcha") as vr:
             vr.return_value = True
@@ -102,7 +108,7 @@ class PasswordTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(scp.call_count, 1)
-        self.assertIn("success", res.data)
+        self.assertTrue("sent", res.data)
 
         res = self.client.patch(
             "/v1/users/password/change/test_password_token/",
@@ -110,7 +116,7 @@ class PasswordTests(TestCase):
         )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertIn("success", res.data)
+        self.assertTrue("changed", res.data)
 
         res = self.client.patch(
             "/v1/users/password/change/test_password_token/",
@@ -118,7 +124,7 @@ class PasswordTests(TestCase):
         )
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertNotIn("success", res.data)
+        self.assertNotIn("changed", res.data)
 
         res = self.client.post(LOGIN_URL, {"email": user.email, "password": "new_new_password"})
 
@@ -131,17 +137,19 @@ class PasswordTests(TestCase):
             "first_name": "Bob",
             "last_name": "Alice",
             "password": "123456",
-            "password_token": "test_password_token",
         }
 
         user = create_user(**payload)
+        user_change_password = UserChangePassword.objects.create(user=user, password_token="test_password_token")
+        user_change_password.created_at = timezone.now() - timezone.timedelta(seconds=31)
+        user_change_password.save()
 
         res = self.client.patch(
             "/v1/users/password/change/wrong_token/",
             {"password": "new_password", "confirm_password": "new_password"},
         )
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertNotIn("success", res.data)
+        self.assertNotIn("changed", res.data)
 
         res = self.client.post(LOGIN_URL, {"email": user.email, "password": "new_password"})
 

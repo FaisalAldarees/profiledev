@@ -26,7 +26,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    password_token = models.CharField(max_length=128, null=True)
     is_active = models.BooleanField(default=True)
     is_email_verified = models.BooleanField(default=False)
     objects = UserManager()
@@ -37,4 +36,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 class UserEmailVerification(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_email_verification')
     email_token = models.CharField(max_length=128)
+    created_at = models.DateTimeField(default=timezone.now)
+
+
+class UserChangePassword(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_change_password')
+    password_token = models.CharField(max_length=128)
     created_at = models.DateTimeField(default=timezone.now)

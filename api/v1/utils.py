@@ -34,6 +34,10 @@ def send_change_password(user_email):
         to=[user_email],
     )
     email.send()
+    user_change_password = get_user_model().objects.get(email=user_email).user_change_password
+    user_change_password.created_at = timezone.now()
+    user_change_password.save()
+    return user_email
 
 
 def delete_unverified_users():
