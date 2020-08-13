@@ -173,6 +173,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "certifications",
             "social_info",
             "about",
+            "headline",
+            "location",
             "skills",
             "user",
         ]

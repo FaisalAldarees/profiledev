@@ -56,6 +56,8 @@ class UserInfoTests(TestCase):
                     "from_date": "2020-1-1",
                 }
             ],
+            "headline": "test headline",
+            "location": "test location",
             "certifications": [
                 {
                     "name": "Introduction to CyberSecurity",
@@ -106,6 +108,8 @@ class UserInfoTests(TestCase):
                     "to_date": None
                 }
             ],
+            "headline": "test headline",
+            "location": "test location",
             "certifications": [
                 {
                     "name": "Introduction to CyberSecurity",
