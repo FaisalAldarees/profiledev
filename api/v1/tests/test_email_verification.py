@@ -11,6 +11,7 @@ from unittest.mock import patch
 
 CREATE_USER_URL = reverse("api:registration")
 RESEND_EMAIL_URL = reverse("api:resend_email_verification")
+CHANGE_EMAIL_URL = reverse("api:change_email")
 
 
 class EmailVerificationTests(TestCase):
@@ -167,3 +168,42 @@ class EmailVerificationTests(TestCase):
         self.assertEqual(res2.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(res2.data["resent"])
         self.assertEqual(se.call_count, 1)
+
+    @patch("api.v1.views.email_verification_views.send_verification_email_task.delay")
+    def test_change_email(self, se):
+        payload = {
+            "email": "test@gmail.com",
+            "first_name": "Bob",
+            "last_name": "Alice",
+            "password": "123456",
+            "confirm_password": "123456",
+            "recaptcha": "test",
+        }
+        with patch("api.v1.serializers.registration_serializers.verifiy_recaptcha") as vr:
+            vr.return_value = True
+            self.client.post(CREATE_USER_URL, payload)
+
+        user = get_user_model().objects.get(email=payload["email"])
+        self.client.force_authenticate(user)
+        self.assertFalse(user.is_email_verified)
+
+        user.is_email_verified = True
+        user.save()
+
+        with patch("api.v1.serializers.change_email_serializers.verifiy_recaptcha") as vr:
+            vr.return_value = True
+            res1 = self.client.patch(CHANGE_EMAIL_URL, {"email": "test2@gmail.com", "recaptcha": "test_recaptcha"})
+            self.assertEqual(vr.call_count, 1)
+
+        user.refresh_from_db()
+
+        self.assertEquals("Check your email inbox for verification", res1.data["success"])
+        self.assertFalse(user.is_email_verified)
+        self.assertEquals("test2@gmail.com", user.email)
+
+        res2 = self.client.get("/v1/users/email/verification/{0}/".format(user.user_email_verification.email_token))
+        user.refresh_from_db()
+
+        self.assertTrue(user.is_email_verified)
+        self.assertEquals("test2@gmail.com", user.email)
+        self.assertTrue(res2.data["verified"])

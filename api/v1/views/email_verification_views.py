@@ -87,6 +87,6 @@ class ChangeEmail(generics.UpdateAPIView):
             user.is_email_verified = False
             user.save()
             send_verification_email_task.delay(user.email)
-            return Response({"succsess": "Check your email inbox for verification"}, status=status.HTTP_200_OK)
+            return Response({"success": "Check your email inbox for verification"}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
