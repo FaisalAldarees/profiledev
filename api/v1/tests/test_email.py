@@ -107,7 +107,7 @@ class EmailVerificationTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
-    @patch("api.v1.views.email_verification_views.send_verification_email_task.delay")
+    @patch("api.v1.views.email_views.send_verification_email_task.delay")
     def test_resend_email(self, se):
         payload = {
             "email": "test@gmail.com",
@@ -136,7 +136,7 @@ class EmailVerificationTests(TestCase):
         self.assertTrue(res2.data["resent"])
         self.assertEqual(se.call_count, 2)
 
-    @patch("api.v1.views.email_verification_views.send_verification_email_task.delay")
+    @patch("api.v1.views.email_views.send_verification_email_task.delay")
     def test_multiple_resend_email(self, se):
         payload = {
             "email": "test@gmail.com",
@@ -169,7 +169,7 @@ class EmailVerificationTests(TestCase):
         self.assertFalse(res2.data["resent"])
         self.assertEqual(se.call_count, 1)
 
-    @patch("api.v1.views.email_verification_views.send_verification_email_task.delay")
+    @patch("api.v1.views.email_views.send_verification_email_task.delay")
     def test_change_email(self, se):
         payload = {
             "email": "test@gmail.com",
