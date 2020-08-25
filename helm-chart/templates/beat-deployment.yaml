@@ -24,7 +24,7 @@ spec:
       containers:
         - name: beat
           image: {{ .Values.backend_image }}
-          command: ["celery", "-A", "profile_dev", "worker", "-l", "info"]
+          command: ["celery", "-A", "profile_dev", "beat", "-l", "info"]
           env:
             - name: DB_USER
               valueFrom:

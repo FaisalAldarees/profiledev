@@ -66,6 +66,9 @@ spec:
                   name: "{{ .Release.Name }}-secrets"
                   key: email_host_password
             - name: DEBUG
-              value: "'true'"
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: debug
           ports:
             - containerPort: 8000

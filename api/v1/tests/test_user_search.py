@@ -58,6 +58,7 @@ class UserSearchTest(TestCase):
                 "social_info": None,
                 "about": None,
                 "skills": None,
+                "avatar": "http://testserver/media/media/uploads/avatar/default.jpeg",
                 "user": user_1.id,
             },
             {
@@ -71,6 +72,7 @@ class UserSearchTest(TestCase):
                 "social_info": None,
                 "about": None,
                 "skills": None,
+                "avatar": "http://testserver/media/media/uploads/avatar/default.jpeg",
                 "user": user_2.id,
             },
         ]

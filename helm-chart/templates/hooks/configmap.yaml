@@ -16,4 +16,6 @@ data:
   db_port: "5432"
   db_name: profiledev
 
+  debug: "True"
+
   email_host: profiledotdev@gmail.com
