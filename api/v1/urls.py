@@ -28,5 +28,6 @@ urlpatterns = [
         email_verification_views.ResendEmail.as_view(),
         name="resend_email_verification",
     ),
-    path("users/search/", search_views.UserSearchList.as_view(), name="search")
+    path("users/search/", search_views.UserSearchList.as_view(), name="search"),
+    path("users/email/change/", email_verification_views.ChangeEmail.as_view(), name="change_email")
 ]
