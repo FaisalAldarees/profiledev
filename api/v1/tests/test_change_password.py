@@ -33,12 +33,13 @@ class PasswordTests(TestCase):
         }
 
         user = create_user(**payload)
-        user_change_password = UserChangePassword.objects.create(user=user, password_token="test_password_token")
-        user_change_password.created_at = timezone.now() - timezone.timedelta(seconds=31)
-        user_change_password.save()
         with patch("api.v1.serializers.password_serializer.verifiy_recaptcha") as vr:
             vr.return_value = True
             res = self.client.patch(SEND_CHANGE_PASSWORD_URL, {"email": user.email, "recaptcha": "asdasd"})
+
+        user.user_change_password.password_token = "test_password_token"
+        user.user_change_password.save()
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(scp.call_count, 1)
         self.assertTrue("sent", res.data)
@@ -65,12 +66,13 @@ class PasswordTests(TestCase):
         }
 
         user = create_user(**payload)
-        user_change_password = UserChangePassword.objects.create(user=user, password_token="test_password_token")
-        user_change_password.created_at = timezone.now() - timezone.timedelta(seconds=31)
-        user_change_password.save()
+
         with patch("api.v1.serializers.password_serializer.verifiy_recaptcha") as vr:
             vr.return_value = True
             res = self.client.patch(SEND_CHANGE_PASSWORD_URL, {"email": user.email, "recaptcha": "asdasd"})
+
+        user.user_change_password.password_token = "test_password_token"
+        user.user_change_password.save()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(scp.call_count, 1)
@@ -98,13 +100,13 @@ class PasswordTests(TestCase):
         }
 
         user = create_user(**payload)
-        user_change_password = UserChangePassword.objects.create(user=user, password_token="test_password_token")
-        user_change_password.created_at = timezone.now() - timezone.timedelta(seconds=31)
-        user_change_password.save()
 
         with patch("api.v1.serializers.password_serializer.verifiy_recaptcha") as vr:
             vr.return_value = True
             res = self.client.patch(SEND_CHANGE_PASSWORD_URL, {"email": user.email, "recaptcha": "asdasd"})
+
+        user.user_change_password.password_token = "test_password_token"
+        user.user_change_password.save()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(scp.call_count, 1)

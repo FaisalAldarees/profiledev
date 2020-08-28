@@ -32,10 +32,9 @@ class ChangePassword(generics.UpdateAPIView):
 
             if user_change_password.created_at <= wait_time:
                 with transaction.atomic():
-                    user_change_password.password_token = uuid.uuid4()
+                    user_change_password.delete()
                     user.set_password(serializer.data.get("password"))
                     user.save()
-                    user_change_password.save()
                 return Response({"changed": True}, status=status.HTTP_200_OK)
             else:
                 return Response({"changed": False}, status=status.HTTP_400_BAD_REQUEST)
@@ -54,11 +53,19 @@ class SendChangePasswordLink(generics.UpdateAPIView):
         if serializer.is_valid():
 
             wait_time = timezone.now() - timedelta(seconds=30)
+            current_time = timezone.now()
             user = get_user_model().objects.get(email=serializer.data.get("email"))
-            user_change_password = user.user_change_password
-            if user_change_password.created_at < wait_time:
+            user_change_password = UserChangePassword.objects.filter(user=user)
+
+            if not user_change_password:
+                user_change_password = UserChangePassword.objects.create(
+                    user=user, password_token=uuid.uuid4(), created_at=current_time
+                )
+
+            if user_change_password.created_at < wait_time or user_change_password.created_at == current_time:
                 send_change_password_task.delay(user.email)
                 return Response({"sent": True}, status=status.HTTP_200_OK)
+
             else:
                 return Response({"sent": False}, status=status.HTTP_400_BAD_REQUEST)
 
