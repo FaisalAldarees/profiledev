@@ -31,10 +31,8 @@ class VerifyEmail(generics.RetrieveAPIView):
         if user_email_verification.created_at <= wait_time:
             with transaction.atomic():
                 user.is_email_verified = True
-                user_email_verification.email_token = uuid.uuid4()
-                user_email_verification.created_at = timezone.now()
-                user_email_verification.save()
                 user.save()
+                user_email_verification.delete()
 
         if not user.is_email_verified:
             return Response({"verified": False}, status=status.HTTP_400_BAD_REQUEST)
@@ -86,6 +84,7 @@ class ChangeEmail(generics.UpdateAPIView):
             user.email = serializer.data.get("email")
             user.is_email_verified = False
             user.save()
+            UserEmailVerification.objects.create(user=user, email_token=uuid.uuid4())
             send_verification_email_task.delay(user.email)
             return Response({"success": "Check your email inbox for verification"}, status=status.HTTP_200_OK)
 

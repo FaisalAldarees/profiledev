@@ -184,6 +184,7 @@ class EmailVerificationTests(TestCase):
             self.client.post(CREATE_USER_URL, payload)
 
         user = get_user_model().objects.get(email=payload["email"])
+        user.user_email_verification.delete()
         self.client.force_authenticate(user)
         self.assertFalse(user.is_email_verified)
 
