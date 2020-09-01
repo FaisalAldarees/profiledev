@@ -4,11 +4,16 @@ from rest_framework.response import Response
 from django.utils import timezone
 from django.db import transaction
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import check_password
 
 from users.tasks import send_change_password_task
 from users.models import UserChangePassword
 
-from api.v1.serializers.password_serializer import SendChangePasswordLinkSerializer, ChangePasswordSerializer
+from api.v1.serializers.password_serializer import (
+    SendChangePasswordLinkSerializer,
+    ChangePasswordSerializer,
+    ChangePasswordWhenLoggedInSerializer,
+)
 
 from datetime import timedelta
 
@@ -68,5 +73,31 @@ class SendChangePasswordLink(generics.UpdateAPIView):
 
             else:
                 return Response({"sent": False}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordWhenLoggedIn(generics.UpdateAPIView):
+    model = get_user_model()
+    queryset = get_user_model().objects.all()
+    serializer_class = ChangePasswordWhenLoggedInSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def get_object(self):
+        return get_user_model().objects.get(id=self.request.user.id)
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = self.get_object()
+            with transaction.atomic():
+                if check_password(serializer.validated_data.get("current_password"), user.password):
+                    user.set_password(serializer.validated_data.get("password"))
+                    user.save()
+                    return Response({"changed": True}, status=status.HTTP_200_OK)
+                else:
+                    return Response(
+                        {"current_password": "current password is incorrect"}, status=status.HTTP_400_BAD_REQUEST
+                    )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

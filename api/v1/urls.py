@@ -34,8 +34,11 @@ urlpatterns = [
         "users/password/change/<str:password_token>/", password_views.ChangePassword.as_view(), name="change_password"
     ),
     path(
-        "users/password/send_link/",
-        password_views.SendChangePasswordLink.as_view(),
-        name="send_change_password_link",
+        "users/password/send_link/", password_views.SendChangePasswordLink.as_view(), name="send_change_password_link",
+    ),
+    path(
+        "users/settings/password/change/",
+        password_views.ChangePasswordWhenLoggedIn.as_view(),
+        name="change_password_logged_in",
     ),
 ]

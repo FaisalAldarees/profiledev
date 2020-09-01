@@ -45,3 +45,25 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
             raise ValidationError(_("Passwords does not match up"))
 
         return data
+
+
+class ChangePasswordWhenLoggedInSerializer(serializers.Serializer):
+    current_password = serializers.CharField(allow_blank=False, write_only=True)
+    password = serializers.CharField(allow_blank=False, write_only=True)
+    confirm_password = serializers.CharField(allow_blank=False, write_only=True)
+
+    class Meta:
+        fields = (
+            "current_password",
+            "password",
+            "confirm_password",
+        )
+
+    def validate(self, data):
+        password = data.get("password")
+        confirm_password = data.pop("confirm_password")
+
+        if password != confirm_password:
+            raise ValidationError(_("Passwords does not match up"))
+
+        return data
