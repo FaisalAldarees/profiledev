@@ -28,8 +28,6 @@ DEBUG = bool(os.environ.get('DEBUG'))
 HOST = 'http://127.0.0.1:8000'
 
 ALLOWED_HOSTS = ['*']
-CORS_ALLOWED_ORIGINS = ['*']
-
 # reCAPTCHA
 
 RECAPTCHA_SECRET_KEY = "6Lfpn6kZAAAAAOkbF-2qEO7TcS69KAczyiKfduuy"
@@ -43,19 +41,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'users',
     'user_profile',
     'api',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -171,6 +168,9 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+
+#cors
+CORS_ALLOW_ALL_ORIGINS=True
 
 # storage
 STATIC_URL = '/static/'
