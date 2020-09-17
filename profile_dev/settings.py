@@ -28,6 +28,7 @@ DEBUG = bool(os.environ.get('DEBUG'))
 HOST = 'http://127.0.0.1:8000'
 
 ALLOWED_HOSTS = ['*']
+CORS_ALLOWED_ORIGINS = ['*']
 
 # reCAPTCHA
 
@@ -47,9 +48,12 @@ INSTALLED_APPS = [
     'users',
     'user_profile',
     'api',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
