@@ -37,3 +37,9 @@ class UserEmailVerification(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_email_verification')
     email_token = models.CharField(max_length=128)
     created_at = models.DateTimeField(default=timezone.now)
+
+
+class UserChangePassword(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_change_password')
+    password_token = models.CharField(max_length=128)
+    created_at = models.DateTimeField(default=timezone.now)

@@ -6,6 +6,7 @@ from api.v1.views import (
     edit_profile_views,
     email_views,
     search_views,
+    password_views,
 )
 
 
@@ -29,5 +30,16 @@ urlpatterns = [
         name="resend_email_verification",
     ),
     path("users/search/", search_views.UserSearchList.as_view(), name="search"),
+    path(
+        "users/password/change/<str:password_token>/", password_views.ChangePassword.as_view(), name="change_password"
+    ),
+    path(
+        "users/password/send_link/", password_views.SendChangePasswordLink.as_view(), name="send_change_password_link",
+    ),
+    path(
+        "users/settings/password/change/",
+        password_views.ChangePasswordWhenLoggedIn.as_view(),
+        name="change_password_logged_in",
+    ),
     path("users/email/change/", email_views.ChangeEmail.as_view(), name="change_email")
 ]
