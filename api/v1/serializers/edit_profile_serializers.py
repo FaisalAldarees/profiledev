@@ -173,7 +173,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "certifications",
             "social_info",
             "about",
+            "headline",
+            "location",
             "skills",
+            "avatar",
             "user",
         ]
-        read_only_fields = ("user",)
+        read_only_fields = ("user", "avatar")

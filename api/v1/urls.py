@@ -4,7 +4,7 @@ from api.v1.views import (
     registration_views,
     login_views,
     edit_profile_views,
-    email_verification_views,
+    email_views,
     search_views,
     password_views,
 )
@@ -21,12 +21,12 @@ urlpatterns = [
     path("users/<int:user_id>/profile/", edit_profile_views.UserProfileRetrive.as_view(), name="profile_retrive",),
     path(
         "users/email/verification/<str:email_token>/",
-        email_verification_views.VerifyEmail.as_view(),
+        email_views.VerifyEmail.as_view(),
         name="email_verification",
     ),
     path(
         "users/email/send_verification/",
-        email_verification_views.ResendEmail.as_view(),
+        email_views.ResendEmail.as_view(),
         name="resend_email_verification",
     ),
     path("users/search/", search_views.UserSearchList.as_view(), name="search"),
@@ -41,4 +41,5 @@ urlpatterns = [
         password_views.ChangePasswordWhenLoggedIn.as_view(),
         name="change_password_logged_in",
     ),
+    path("users/email/change/", email_views.ChangeEmail.as_view(), name="change_email")
 ]
