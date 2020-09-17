@@ -24,6 +24,7 @@ def create_user(**params):
 class UserInfoTests(TestCase):
     def setUp(self):
         self.user = create_user()
+        self.profile = UserProfile.objects.get(user=self.user)
         self.client = APIClient()
         self.client.force_authenticate(self.user)
 
@@ -56,6 +57,8 @@ class UserInfoTests(TestCase):
                     "from_date": "2020-1-1",
                 }
             ],
+            "headline": "test headline",
+            "location": "test location",
             "certifications": [
                 {
                     "name": "Introduction to CyberSecurity",
@@ -106,6 +109,8 @@ class UserInfoTests(TestCase):
                     "to_date": None
                 }
             ],
+            "headline": "test headline",
+            "location": "test location",
             "certifications": [
                 {
                     "name": "Introduction to CyberSecurity",
@@ -123,6 +128,7 @@ class UserInfoTests(TestCase):
             ],
             "about": "This is a test about",
             "skills": ["Java", "Python", "HTML"],
+            "avatar": "http://testserver/media/media/uploads/avatar/default.jpeg",
             "user": self.user.id
         }
         self.assertEqual(res.status_code, status.HTTP_200_OK)
