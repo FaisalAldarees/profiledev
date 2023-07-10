@@ -10,7 +10,7 @@ services:
      ["python", "manage.py", "migrate"]
    environment:
      - DB_HOST=35.226.39.177
-     - DB_PORT=5432
+     - DB_PORT=5433
      - DB_NAME=profiledev
      - DB_USER=profile_dev
      - DB_PASS=1233212123415263
