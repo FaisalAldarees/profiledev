@@ -1,10 +1,12 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: profiledev
-  annotations:
-    github.com/project-slug: FaisalAldarees/profiledev
+  name: api-v1
+  description: Backend side of profile.dev
+  tags:
+    - go
+    - website
 spec:
-  type: other
-  lifecycle: unknown
-  owner: my-group
+  type: service
+  lifecycle: production
+  owner: user:faisal
