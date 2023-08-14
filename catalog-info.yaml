@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: api-v1
+  name: pd-api-v1
   description: Backend side of profile.dev
   tags:
     - api
