@@ -5,6 +5,7 @@ metadata:
   description: Backend side of profile.dev
   tags:
     - api
+    - v1
 spec:
   type: service
   lifecycle: production
