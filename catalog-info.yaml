@@ -4,8 +4,7 @@ metadata:
   name: api-v1
   description: Backend side of profile.dev
   tags:
-    - go
-    - website
+    - api
 spec:
   type: service
   lifecycle: production
